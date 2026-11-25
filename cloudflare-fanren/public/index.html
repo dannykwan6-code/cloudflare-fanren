@@ -44,12 +44,6 @@
       .world{background:var(--panel2);border:1px solid var(--line);border-left:5px solid var(--accent);
         border-radius:10px;padding:16px 18px;margin-bottom:18px}
       .world p{margin:0;text-align:justify}
-      .presets{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
-      .preset{text-align:left;background:var(--panel2);border:1px solid var(--line);border-radius:12px;
-        padding:12px 14px;color:var(--ink);line-height:1.55}
-      .preset:hover{border-color:var(--accent)}
-      .preset b{display:block;font-size:1.05rem;margin-bottom:2px}
-      .preset span{font-size:.86rem;color:var(--ink-soft)}
       .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
       .field{display:flex;flex-direction:column;gap:5px}
       .field.full{grid-column:1/-1}
@@ -145,7 +139,6 @@
         background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:10px 12px;display:none}
       [hidden]{display:none !important}
       @media (max-width:640px){
-        .presets{grid-template-columns:1fr}
         .grid{grid-template-columns:1fr}
         .opts{grid-template-columns:1fr}
         h1{font-size:1.6rem}
@@ -166,16 +159,7 @@
 
         <div class="panel">
           <h2>玩家角色卡</h2>
-          <p class="hint" style="margin-top:-4px">角色卡預設全空白：自行填寫，或者撳上面嘅預設身份先會一鍵填入。所有身份一律由凡人／未入煉氣開始——包括原著人物：只用年輕版、未成名版或平行分支，唔會白送高境界、法寶或全知記憶。原著身份帶嚟嘅係關係、聲望壓力、宗門位置、起始地點同隱藏特質；你嘅選擇可以令故事偏離原著，引擎會追蹤偏離程度，唔會強行拉返去韓立主線。</p>
-          <div class="presets">
-            <button type="button" class="preset" data-preset="0"><b>山村少年</b><span>偽靈根 · 機緣深厚 · 靈石少<br />韓立式開局：青牛鎮出身，靠毅力硬爬。</span></button>
-            <button type="button" class="preset" data-preset="1"><b>宗門雜役</b><span>雙靈根 · 資源穩定 · 有宗門靠山<br />黃楓谷雜役弟子，未入煉氣，先求站穩。</span></button>
-            <button type="button" class="preset" data-preset="2"><b>坊市學徒散修</b><span>三靈根 · 自由但艱難 · 無依無靠<br />太南山坊市幫工，消息靈通，一無所有。</span></button>
-            <button type="button" class="preset" data-preset="3"><b>陳師兄嘅細佬</b><span>原著關係者 · 黃楓谷 · 聲望壓力<br />有兄長光環，亦有人等你出醜；本事要自己練。</span></button>
-            <button type="button" class="preset" data-preset="4"><b>玄骨（年輕版）</b><span>原著人物 · 平行分支 · 時代唔夾要合理化<br />未成名、未入煉氣，無後來修為同法寶，只有心性同隱藏特質。</span></button>
-            <button type="button" class="preset" data-preset="5"><b>韓立同鄉（關係者）</b><span>原著關係者 · 青牛鎮同鄉<br />熟唔代表分到機緣；可以同佢分道，行自己條路。</span></button>
-            <button type="button" class="preset" data-preset="6"><b>鄉下凡人</b><span>未入仙門 · 一無所有 · 靠自己搵仙緣<br />山村農家子，靈根都未正式測過，先諗點去升仙大會。</span></button>
-          </div>
+          <p class="hint" style="margin-top:-4px">角色卡不設任何預設身份，全部欄位空白，請自行設定：名字、靈根、出身、宗門／身份、目標與限制，皆由你決定。所有身份一律由凡人／未入煉氣開始，唔會白送高境界、法寶或全知記憶；你嘅選擇可以令故事偏離原著，引擎會追蹤偏離程度，唔會強行拉返去韓立主線。</p>
           <div class="grid">
             <div class="field"><label for="fName">名字</label><input id="fName" type="text" placeholder="例如：韓立" /></div>
             <div class="field"><label for="fDao">道號（未有可留空）</label><input id="fDao" type="text" placeholder="凡人多半未有道號" /></div>
@@ -351,44 +335,7 @@
     function phaseInfo(){ return PHASES[phaseIndex()]; }
 
     var IDTYPE_LABEL = {original:"原創凡人", canon_young:"原著人物（年輕版）", canon_relation:"原著關係者", canon_branch:"平行分支人物"};
-    /* ============ 預設身份（全部凡人，未入煉氣；原著人物一律年輕版） ============ */
-    var PRESETS = [
-      {name:"韓立",dao:"",origin:"越國鏡州青牛鎮五里溝，山村農家子弟",root:"wei",
-       sect:"黃楓谷記名弟子",goal:"活下去，一步一步爬到築基",stones:3,style:"steady",
-       idType:"canon_young",anchor:"韓立",relation:"本人（年輕版）",era:"七玄門／黃楓谷前段 · 越國鏡州至太嶽山脈",
-       limit:"未入煉氣；唔預知未來，唔知邊度有寶；小瓶來歷未明，要自己摸索，唔會自動變強。",
-       extra:"三叔引薦入七玄門摸骨測出靈根；隨身帶著一隻撿來的神秘小瓶。"},
-      {name:"陸雲風",dao:"",origin:"越國建州修仙小家族旁支子弟",root:"shuang",
-       sect:"黃楓谷雜役弟子",goal:"在黃楓谷站穩腳跟，爭取早日入煉氣",stones:30,style:"steady",
-       idType:"original",anchor:"",relation:"",era:"黃楓谷時期 · 太嶽山脈",
-       limit:"家族供奉有限；入不了煉氣就要返去接管鋪子，唔可以無限拖。",
-       extra:"家族每月有少量供奉，但族中長輩明言：入不了煉氣，就回來接管鋪子。"},
-      {name:"沈青禾",dao:"",origin:"天南散修之後，自幼跟著父親在坊市討生活",root:"san",
-       sect:"無門無派（散修）",goal:"在太南山一帶攢夠靈石，拜入七大派",stones:12,style:"lucky",
-       idType:"original",anchor:"",relation:"",era:"太南山坊市 · 天南越國",
-       limit:"無宗門庇護；消息多但真假要自己分，買錯嘢無人賠。",
-       extra:"在太南山坊市一間符籙鋪做學徒，消息靈通，認得不少來往散修。"},
-      {name:"陳小嶺",dao:"",origin:"越國陳家子弟，陳師兄同族細佬，自幼喺家族祠堂旁長大",root:"ice",
-       sect:"黃楓谷記名弟子",goal:"唔靠兄長名頭，自己喺黃楓谷站穩",stones:10,style:"steady",
-       idType:"canon_relation",anchor:"陳師兄（陳巧倩一族／黃楓谷陳家）",relation:"同族細佬，自小受兄長聲望籠罩",era:"黃楓谷時期 · 太嶽山脈",
-       limit:"未入煉氣；兄長名頭只帶嚟方便打聽同額外注視，唔帶嚟法寶同修為；做錯事會傳返陳家，聲望壓力會變成審視同比較。",
-       extra:"旁人提起你，第一句總係「陳師兄個細佬」——好處係門房肯畀面，壞處係你每一步都有人睇住、有人比較。"},
-      {name:"玄骨",dao:"",origin:"年輕時尚未成名，出身來歷只餘零碎說法（平行分支）",root:"dark",
-       sect:"無門無派（散修）",goal:"喺未走上舊路之前，重新揀自己條路",stones:6,style:"bold",
-       idType:"canon_branch",anchor:"玄骨",relation:"本人（年輕版／平行分支）",era:"原著時代之前 · 平行分支 · 天南邊緣",
-       limit:"未入煉氣；無後來修為、法寶同完整記憶，只有零碎直覺同偏冷心性，當唔得全知；時代地點唔夾之處一律以年輕版／平行分支處理，唔硬套後來事件。",
-       extra:"你有時會閃過唔屬於而家年紀嘅念頭，但真假難分，講出口只會招來猜疑——呢份「特質」係負擔，多過係本事。"},
-      {name:"韓小立",dao:"",origin:"越國鏡州青牛鎮，韓家鄰舍子弟，同韓立自小一齊玩大",root:"wei",
-       sect:"尚未入門（待升仙大會）",goal:"跟住自己步伐入門，唔做任何人影子",stones:3,style:"lucky",
-       idType:"canon_relation",anchor:"韓立",relation:"同鄉兼兒時玩伴（關係者）",era:"七玄門／升仙大會前 · 越國鏡州",
-       limit:"未入煉氣；同韓立熟唔代表知道佢所有秘密，亦唔會分到佢嘅機緣；你嘅選擇可以同佢分道，甚至行去完全唔同嘅宗門。",
-       extra:"你同嗰個沉默寡言嘅同鄉一齊長大——人哋嘅路係人哋嘅，你要行自己嗰條。"},
-      {name:"王小牛",dao:"",origin:"越國鏡州青牛鎮外王家村，世代務農的農家子弟",root:"wei",
-       sect:"尚未入門（待升仙大會）",goal:"離開山村，去升仙大會碰一碰仙緣",stones:0,style:"steady",
-       idType:"original",anchor:"",relation:"",era:"升仙大會之前 · 越國鏡州山村",
-       limit:"未入仙門，靈根只係細時畀游方道士隨口提過，未正式測過；唔識宗門規矩，手上只有幾文銅錢同一把舊柴刀，仙緣要自己一步步搵。",
-       extra:"阿爺臨終前提過：多年前有位「仙人」在雨夜借宿村外山神廟，留下一句『此村娃兒骨相不俗』——真假無人知，亦無人當真。"}
-    ];
+    /* 預設身份已全數取消：角色卡不提供任何預設，玩家自行設定全部欄位。 */
 
     /* ============ 道友池 ============ */
     var MATE_POOL = [
@@ -1174,24 +1121,8 @@
     });
 
     /* ============ 開局 ============ */
-    function fillPreset(p){
-      $("fName").value=p.name; $("fDao").value=p.dao; $("fOrigin").value=p.origin;
-      $("fRoot").value=p.root; $("fSect").value=p.sect; $("fGoal").value=p.goal;
-      $("fStones").value=p.stones; $("fStyle").value=p.style; $("fExtra").value=p.extra;
-      if ($("fIdType")) $("fIdType").value=p.idType||"original";
-      if ($("fAnchor")) $("fAnchor").value=p.anchor||"";
-      if ($("fRelation")) $("fRelation").value=p.relation||"";
-      if ($("fEra")) $("fEra").value=p.era||"";
-      if ($("fLimit")) $("fLimit").value=p.limit||"";
-    }
-    document.querySelectorAll(".preset").forEach(function(btn){
-      btn.addEventListener("click", function(){
-        fillPreset(PRESETS[parseInt(btn.getAttribute("data-preset"),10)]);
-        btn.scrollIntoView({behavior:"smooth", block:"center"});
-      });
-    });
     /* 預設角色卡全清空：開頁唔預填任何身份（包括瀏覽器自動還原嘅舊值），
-       玩家自行填寫；撳上面嘅預設身份，先至會一鍵填入成張卡。 */
+       玩家自行填寫；無任何預設身份可揀。 */
     function clearCharacterCard(){
       ["fName","fDao","fOrigin","fSect","fGoal","fStones","fAnchor","fRelation","fEra","fLimit","fExtra"].forEach(function(id){
         var el = $(id); if (el) el.value = "";
