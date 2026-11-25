@@ -94,12 +94,19 @@
         padding:12px 14px;font-size:.92rem;line-height:1.7;overflow-x:auto;margin:.6em 0;
         font-family:"Noto Sans TC",monospace;white-space:pre}
       .turn .stat{margin-top:.7em;font-size:.9rem;color:var(--gold);letter-spacing:.02em;word-break:break-all}
-      .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+      .opts{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px}
       .opt{text-align:left;background:var(--panel2);border:1px solid var(--line);border-radius:11px;
-        padding:11px 14px;color:var(--ink);line-height:1.6}
+        padding:12px 16px;color:var(--ink);line-height:1.6;width:100%}
       .opt:hover{border-color:var(--accent)}
-      .opt b{color:var(--accent);margin-right:6px}
-      .quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+      .opt b{color:var(--accent);margin-right:8px}
+      .morebox{margin-top:14px;border-top:1px dashed var(--line);padding-top:6px}
+      .morebox>summary{cursor:pointer;color:var(--ink-soft);font-size:.92rem;min-height:40px;
+        display:flex;align-items:center;list-style:none;letter-spacing:.03em}
+      .morebox>summary::-webkit-details-marker{display:none}
+      .morebox>summary::after{content:"▾";margin-left:6px;font-size:.8rem}
+      .morebox[open]>summary::after{content:"▴"}
+      .morebox>summary:hover{color:var(--accent)}
+      .quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
       .quick button{background:transparent;border:1px solid var(--line);color:var(--ink-soft);
         border-radius:999px;padding:6px 14px;min-height:38px;font-size:.9rem}
       .quick button:hover{border-color:var(--accent);color:var(--accent)}
@@ -244,16 +251,19 @@
           <h2>修仙歷程</h2>
           <div id="log"></div>
           <div class="opts" id="options"></div>
-          <div class="quick" id="quickBar"></div>
           <div class="inputrow">
-            <textarea id="freeInput" rows="2" placeholder="自由輸入行動，例如：去坊市買聚氣丹／閉關修煉／同道友切磋……"></textarea>
+            <textarea id="freeInput" rows="2" placeholder="或者自己打：你想做咩？例如「去坊市買聚氣丹／閉關修煉／同道友切磋」……"></textarea>
             <button type="button" class="btn" id="sendBtn">行動</button>
           </div>
-          <div class="toggleline" style="margin-top:10px">
-            <label><input type="checkbox" id="aiToggle" /> AI 敘事模式（需站主設定 DeepSeek；未設定時自動用內置引擎）</label>
-            <label><input type="checkbox" id="repairToggle" checked /> 文筆修復第二遍（第一稿漂移時自動送返 AI 只改文筆，會多一次 API 呼叫）</label>
-            <button type="button" class="btn ghost small" id="restartBtn">重新開始</button>
-          </div>
+          <details class="morebox" id="moreBox">
+            <summary>更多行動・設定</summary>
+            <div class="quick" id="quickBar"></div>
+            <div class="toggleline" style="margin-top:12px">
+              <label><input type="checkbox" id="aiToggle" /> AI 敘事模式（需站主設定 DeepSeek；未設定時自動用內置引擎）</label>
+              <label><input type="checkbox" id="repairToggle" checked /> 文筆修復第二遍（第一稿漂移時自動送返 AI 只改文筆，會多一次 API 呼叫）</label>
+              <button type="button" class="btn ghost small" id="restartBtn">重新開始</button>
+            </div>
+          </details>
         </div>
 
         <div class="panel">
