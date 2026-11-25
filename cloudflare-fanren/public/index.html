@@ -166,7 +166,7 @@
 
         <div class="panel">
           <h2>玩家角色卡</h2>
-          <p class="hint" style="margin-top:-4px">所有身份一律由凡人／未入煉氣開始——包括原著人物：只用年輕版、未成名版或平行分支，唔會白送高境界、法寶或全知記憶。原著身份帶嚟嘅係關係、聲望壓力、宗門位置、起始地點同隱藏特質；你嘅選擇可以令故事偏離原著，引擎會追蹤偏離程度，唔會強行拉返去韓立主線。</p>
+          <p class="hint" style="margin-top:-4px">角色卡預設全空白：自行填寫，或者撳上面嘅預設身份先會一鍵填入。所有身份一律由凡人／未入煉氣開始——包括原著人物：只用年輕版、未成名版或平行分支，唔會白送高境界、法寶或全知記憶。原著身份帶嚟嘅係關係、聲望壓力、宗門位置、起始地點同隱藏特質；你嘅選擇可以令故事偏離原著，引擎會追蹤偏離程度，唔會強行拉返去韓立主線。</p>
           <div class="presets">
             <button type="button" class="preset" data-preset="0"><b>山村少年</b><span>偽靈根 · 機緣深厚 · 靈石少<br />韓立式開局：青牛鎮出身，靠毅力硬爬。</span></button>
             <button type="button" class="preset" data-preset="1"><b>宗門雜役</b><span>雙靈根 · 資源穩定 · 有宗門靠山<br />黃楓谷雜役弟子，未入煉氣，先求站穩。</span></button>
@@ -174,6 +174,7 @@
             <button type="button" class="preset" data-preset="3"><b>陳師兄嘅細佬</b><span>原著關係者 · 黃楓谷 · 聲望壓力<br />有兄長光環，亦有人等你出醜；本事要自己練。</span></button>
             <button type="button" class="preset" data-preset="4"><b>玄骨（年輕版）</b><span>原著人物 · 平行分支 · 時代唔夾要合理化<br />未成名、未入煉氣，無後來修為同法寶，只有心性同隱藏特質。</span></button>
             <button type="button" class="preset" data-preset="5"><b>韓立同鄉（關係者）</b><span>原著關係者 · 青牛鎮同鄉<br />熟唔代表分到機緣；可以同佢分道，行自己條路。</span></button>
+            <button type="button" class="preset" data-preset="6"><b>鄉下凡人</b><span>未入仙門 · 一無所有 · 靠自己搵仙緣<br />山村農家子，靈根都未正式測過，先諗點去升仙大會。</span></button>
           </div>
           <div class="grid">
             <div class="field"><label for="fName">名字</label><input id="fName" type="text" placeholder="例如：韓立" /></div>
@@ -181,10 +182,11 @@
             <div class="field"><label for="fOrigin">出身</label><input id="fOrigin" type="text" placeholder="例如：越國鏡州青牛鎮五里溝" /></div>
             <div class="field"><label for="fRoot">靈根</label>
               <select id="fRoot">
+                <option value="" selected>請選擇靈根</option>
                 <option value="tian">天靈根（萬中無一）</option>
                 <option value="shuang">雙靈根</option>
                 <option value="san">三靈根</option>
-                <option value="wei" selected>偽靈根（四屬雜靈根）</option>
+                <option value="wei">偽靈根（四屬雜靈根）</option>
                 <option value="dark">變異靈根：暗</option>
                 <option value="thunder">變異靈根：雷</option>
                 <option value="ice">變異靈根：冰</option>
@@ -207,17 +209,19 @@
               </datalist>
             </div>
             <div class="field"><label for="fGoal">目標</label><input id="fGoal" type="text" placeholder="例如：築基成功，衣錦還鄉" /></div>
-            <div class="field"><label for="fStones">起始靈石</label><input id="fStones" type="number" min="0" max="999" step="1" value="3" /></div>
+            <div class="field"><label for="fStones">起始靈石</label><input id="fStones" type="number" min="0" max="999" step="1" placeholder="例如：3" /></div>
             <div class="field"><label for="fStyle">性格路線</label>
               <select id="fStyle">
-                <option value="steady" selected>穩健（修為起步稍高，突破較穩）</option>
+                <option value="" selected>請選擇性格路線</option>
+                <option value="steady">穩健（修為起步稍高，突破較穩）</option>
                 <option value="bold">激進（修煉進境快，風險亦高）</option>
                 <option value="lucky">機緣型（歷練奇遇較多，修為起步低）</option>
               </select>
             </div>
             <div class="field"><label for="fIdType">身份類型</label>
               <select id="fIdType">
-                <option value="original" selected>原創凡人（無原著包袱）</option>
+                <option value="" selected>請選擇身份類型</option>
+                <option value="original">原創凡人（無原著包袱）</option>
                 <option value="canon_young">原著人物（年輕／未入煉氣版）</option>
                 <option value="canon_relation">原著人物關係者（親屬／師弟／同鄉等）</option>
                 <option value="canon_branch">平行分支人物（時代或地點唔夾，另開一線）</option>
@@ -238,6 +242,10 @@
             <button type="button" class="btn" id="startBtn">以呢個身份開始修仙</button>
             <span class="hint">越國七大派：黃楓谷、掩月宗、清虛門、巨劍門、化刀塢、天闕堡、靈獸山。</span>
           </div>
+          <div class="toggleline" style="margin-top:10px">
+            <label><input type="checkbox" id="aiToggleSetup" checked /> AI 敘事模式：開局第一 P 由 DeepSeek 按你揀嘅角色卡生成（API 餘額不足／未設定／連接失敗時不能開局；取消勾選則用內置開局）</label>
+          </div>
+          <p id="startError" hidden style="color:var(--danger);font-weight:700;margin:10px 0 0;line-height:1.7"></p>
         </div>
       </section>
 
@@ -274,7 +282,7 @@
             <summary>更多行動・設定</summary>
             <div class="quick" id="quickBar"></div>
             <div class="toggleline" style="margin-top:12px">
-              <label><input type="checkbox" id="aiToggle" checked /> AI 敘事模式（預設開啟；需站主設定 DeepSeek，未設定時自動用內置引擎）</label>
+              <label><input type="checkbox" id="aiToggle" checked /> AI 敘事模式（預設開啟；開局第一 P 必須連通 DeepSeek 先至開到局，回合中途連接失敗才自動用內置引擎接住）</label>
               <label><input type="checkbox" id="repairToggle" checked /> 文筆修復第二遍（第一稿漂移時自動送返 AI 只改文筆，會多一次 API 呼叫）</label>
               <button type="button" class="btn ghost small" id="restartBtn">重新開始</button>
             </div>
@@ -374,7 +382,12 @@
        sect:"尚未入門（待升仙大會）",goal:"跟住自己步伐入門，唔做任何人影子",stones:3,style:"lucky",
        idType:"canon_relation",anchor:"韓立",relation:"同鄉兼兒時玩伴（關係者）",era:"七玄門／升仙大會前 · 越國鏡州",
        limit:"未入煉氣；同韓立熟唔代表知道佢所有秘密，亦唔會分到佢嘅機緣；你嘅選擇可以同佢分道，甚至行去完全唔同嘅宗門。",
-       extra:"你同嗰個沉默寡言嘅同鄉一齊長大——人哋嘅路係人哋嘅，你要行自己嗰條。"}
+       extra:"你同嗰個沉默寡言嘅同鄉一齊長大——人哋嘅路係人哋嘅，你要行自己嗰條。"},
+      {name:"王小牛",dao:"",origin:"越國鏡州青牛鎮外王家村，世代務農的農家子弟",root:"wei",
+       sect:"尚未入門（待升仙大會）",goal:"離開山村，去升仙大會碰一碰仙緣",stones:0,style:"steady",
+       idType:"original",anchor:"",relation:"",era:"升仙大會之前 · 越國鏡州山村",
+       limit:"未入仙門，靈根只係細時畀游方道士隨口提過，未正式測過；唔識宗門規矩，手上只有幾文銅錢同一把舊柴刀，仙緣要自己一步步搵。",
+       extra:"阿爺臨終前提過：多年前有位「仙人」在雨夜借宿村外山神廟，留下一句『此村娃兒骨相不俗』——真假無人知，亦無人當真。"}
     ];
 
     /* ============ 道友池 ============ */
@@ -884,23 +897,23 @@
       return { key: $("apiKey").value.trim(), model: $("apiModel").value };
     }
     /* 蒸餾規則（頁面內置，唔依賴外部 skill 檔）：只傳壓縮規則＋當前狀態摘要，唔塞成份 skill */
-    var DISTILLED_RULES = "【人間篇蒸餾規則】境界凡人→煉氣→築基→結丹→元嬰→化神；壽元約80/120/200/500/1000/2000年，時間會耗壽元同機會。七派：黃楓谷、掩月宗、清虛門、巨劍門、化刀塢、天闕堡、靈獸山。地域隨境界：煉氣前後天南越國太嶽/太南山/血色禁地準備；築基越國動盪；結丹亂星海（星宮/逆星盟、島嶼海獸）；元嬰天南回歸/墜魔谷/大晉/空間節點壓力。試煉門檻硬性：血色禁地煉氣、虛天殿結丹、墜魔谷元嬰，未達只可聽聞/外圍。資源稀缺：靈石、丹藥、材料有限，買賣要講價計數；每樣收穫要有代價（目擊、露財、欠賬、欠人情、受傷、耗日子）。單次行動修為增益最多當前門檻一半，唔跳級；突破要門檻+準備+風險，失敗傷身耗資源唔即死（除非玩家自選死路）。文筆克制：寫具體勞動、等候、趕路、講價、療傷、小計算；勝利要窄同賺返嚟，退走/斂氣/交易/忍耐係正當解法；唔好即刻精通、免費寶物、公開羞辱式爽點。NPC按利益、恐懼、感激、貪念、宗門忠誠、家族壓力同有限資訊行事，唔會無條件幫人。身份規則：原著人物一律年輕/未入煉氣版，冇高境界、冇法寶、冇全知未來記憶；關係者只得關係、聲望壓力、宗門位置、起始地點、隱藏特質同原著引力，唔會分到錨點人物嘅機緣。玩家選擇可以偏離原著，偏離只增唔好強行拉返韓立主線；時代/地點唔夾（如玄骨）用年輕版/平行分支合理化。硬規則由本地 code 執行同 clamp，你只負責敘事同提出合理狀態，唔好試圖繞過門檻/上限/數量。";
-    var STYLE_RULES = "【凡人流文筆校準】繁體中文，第二人稱「你」，貼近人物當下感官同手邊嘅事。正文要展開（每回合約 2–4 段、每段 3–6 句），但唔堆形容詞：少用「驚天、絕世、無比、恐怖如斯」呢類空泛大詞，多寫睇得見嘅細節——手點做、要等幾耐、花幾多、傷喺邊、邊個企喺旁邊睇住。修煉係重複勞動：運轉、停頓、失敗、再嚟；收穫要即刻計代價（靈石少咗、丹藥用咗、畀人見到、欠咗人情、耗咗日子）。NPC 只准用說話、動作、停頓同取捨嚟呈現，唔好直接講穿佢哋隱藏心聲，唔好寫「佢心諗／暗想其實要害你」；佢哋按利益、恐懼、面子、宗門規矩同有限資訊行事，幫你要有理由，拒絕你亦要有理由。禁止爽文套路：唔好即時打臉、眾人跪服、全場震驚、秒殺、一步登天、免費奇遇、白送法寶、主角光環令人自動讓路。禁止現代網絡 slang：唔好用 666、yyds、絕絕子、臥槽、打卡、好 chill、流量、內卷 等現代詞；對話要合古修世界身份。勝利要窄：贏半招、採夠就走、講價爭到一塊靈石，都算贏；退走、斂氣、忍耐、交易，往往先係凡人流嘅解法。";
-    var STYLE_ANCHORS = "【文筆錨點一·藥園勞動（原創範例，學語氣同格式，唔好抄字句）】\n你天未光就去藥園，先逐壟睇土色，再決定邊壟淋靈雨。靈雨術唔難，難在均勻：手抬高一寸，水就散；壓低一寸，又只濕到葉面。你淋到第三壟，丹田已經發空，只好停低，坐喺田邊等靈氣慢慢返嚟。管事驗收嗰陣冇讚你，只用指尖捻起一片葉，點頭話「呢壟算合格」，跟住喺冊上記低你今個月第二次冇出錯。冇人喝彩，但呢一筆，比喝彩有用——下次分差事，佢會先諗起記得住名字嘅人。\n❖ P.12 | 第 4 日・黃楓谷藥園\n❖ 境界：煉氣（修為 3/9）\n❖ 靈石：7；❖ 丹藥：1；❖ 材料：2；❖ 身體狀態：略感疲憊；❖ 原著偏離：0\nA、繼續淋埋餘下兩壟，慢啲都做完\nB、去任務堂問下個月差事點分\nC、返住處打坐，補返丹田靈氣\nD、瞓覺，聽日再嚟驗收\n"+
-    "【文筆錨點二·坊市講價（原創範例）】\n攤主開價十塊，你冇即刻還價，先拈起嗰瓶聚氣丹睇封口。封蠟有裂，係擺耐咗嘅貨，藥力最多餘七成。你將呢點講出嚟，佢面色唔變，只將瓶推返近少少：「八塊，唔買就放低。」你計過：八塊買七成藥力，仲平過正價買新貨，但你袋只得十一塊，買完就冇錢租丹房。你最後用七塊半——即係七塊加一份材料——成交，攤主收材料嗰陣掂咗掂分量，先肯點頭。冇人輸冇人贏到盡，雙方都只係爭到自己嗰一線。\n❖ P.18 | 第 6 日・太南山坊市\n❖ 境界：煉氣（修為 4/9）\n❖ 靈石：3；❖ 丹藥：4；❖ 材料：1；❖ 身體狀態：精神飽滿；❖ 原著偏離：1\nA、即刻返客棧服一粒丹試藥力\nB、將丹收好，先去做任務補靈石\nC、喺坊市多行一圈，記低邊檔封蠟有裂\nD、斂氣離開，唔好畀人記住你買過丹\n"+
-    "【文筆錨點三·知難而退（原創範例）】\n石縫入面嗰點微光，你企喺三丈外睇咗好耐。入去唔難，難係出嚟嗰陣點算：左邊係塌方，右邊水聲越來越近，你手邊只得一張舊符，傷口仲未結痂。你最後冇入去，只用炭喺石壁低處做咗個唔起眼嘅記號，退返去山道。行到半路，身後傳嚟一聲悶響，塵土隔咗一陣先湧出嚟。你冇慶幸自己好彩，只將記號嘅位置、時辰同水聲方向逐樣記低——退，唔係放棄，係將今次冇本錢攞嘅嘢，留返畀下次有本錢嘅自己。\n❖ P.23 | 第 9 日・太嶽山脈溪谷\n❖ 境界：煉氣（修為 5/9）\n❖ 靈石：9；❖ 丹藥：1；❖ 材料：3；❖ 身體狀態：身受輕傷；❖ 原著偏離：2\nA、返藥園療傷，記低石縫位置\nB、去坊市買多兩張符，先補保命嘢\nC、搵相熟道友商量，唔好自己再探\nD、瞓覺養傷，聽日再決定";
+    var DISTILLED_RULES = "【人間篇蒸餾規則】境界依序為凡人、煉氣、築基、結丹、元嬰、化神；壽元約為八十、一百二十、二百、五百、一千、二千年，時間流逝會同時消耗壽元與機會。越國七派：黃楓谷、掩月宗、清虛門、巨劍門、化刀塢、天闕堡、靈獸山。地域隨境界推進：煉氣前後在天南越國太嶽山脈、太南山坊市一帶求存，並為血色禁地作準備；築基後越國局勢動盪；結丹後轉往亂星海（星宮與逆星盟對峙，島嶼、海獸與船期皆是日常）；元嬰後回歸天南，面對墜魔谷、大晉與空間節點的壓力。試煉門檻為硬性規定：血色禁地限煉氣期、虛天殿限結丹期、墜魔谷限元嬰期，未達境界者只能聽聞或在外圍活動。資源稀缺：靈石、丹藥、材料皆有限，買賣必須講價計數；每一項收穫都要付出代價（被人目擊、露財、欠債、欠人情、受傷或耗費時日）。單次行動的修為增益最多為當前門檻的一半，不得跳級；突破需要修為達至門檻、事前準備與承擔風險，失敗會傷身並耗損資源，但不會即刻死亡（除非玩家自行選擇死路）。文筆務求克制：多寫具體的勞動、等候、趕路、講價、療傷與小額計算；勝利要狹窄而且得來不易，退走、斂氣、交易與忍耐都是正當的解法；不得即刻精通、不得免費贈送寶物、不得使用公開羞辱式的爽文橋段。NPC 依利益、恐懼、感激、貪念、宗門忠誠、家族壓力與有限資訊行事，不會無條件幫助主角。身份規則：原著人物一律採用年輕、未入煉氣的版本，沒有高境界、法寶與全知的未來記憶；關係者只擁有關係、聲望壓力、宗門位置、起始地點、隱藏特質與原著引力，不會分得錨點人物的機緣。玩家的選擇可以偏離原著，偏離度只會增加，系統不會強行把故事拉回韓立的主線；時代或地點不合之處（如玄骨），以年輕版或平行分支合理化。硬性規則由本地程式執行與鉗制，你只負責敘事與提出合理的狀態，不得試圖繞過門檻、上限與數量限制。全文一律使用繁體書面語，禁止粵語口語詞彙。";
+    var STYLE_RULES = "【凡人流文筆校準】全文（包括正文、狀態欄中的場景名稱，以及 A 至 D 選項）一律使用繁體中文書面語，第二人稱「你」，貼近人物當下的感官與手邊事務。嚴禁用粵語口語字詞與助詞，例如：係、唔、嘅、咗、啲、嚟、俾、冇、嗰、喺、瞓、搵、佢、哋、嘢、畀、諗、睇、咩、乜、點解、而家、聽日、邊個、邊度、呢啲；應改用書面語：是、不、的、了、些、來、給、沒有、那、在、睡、找、他、們、東西、想、看、為何、現在、明日、誰、何處、這些。正文要展開（每回合約二至四段，每段三至六句），但不堆砌形容詞：少用「驚天、絕世、無比、恐怖如斯」一類空泛大詞，多寫看得見的細節——手如何做、要等多久、花費多少、傷在何處、誰站在旁邊看著。修煉是重複的勞動：運轉、停頓、失敗、再來；收穫要即刻計算代價（靈石減少、丹藥耗用、被人看見、欠下人情、耗費時日）。NPC 只能以說話、動作、停頓與取捨呈現，不得直接講穿其隱藏心聲，不得寫「他心中暗想其實要害你」一類句子；NPC 依利益、恐懼、面子、宗門規矩與有限資訊行事，幫助主角要有理由，拒絕也要有理由。禁止爽文套路：不得即時打臉、眾人跪服、全場震驚、秒殺、一步登天、免費奇遇、白送法寶、主角光環令旁人自動讓路。禁止現代網絡用語：不得使用 666、yyds、絕絕子、臥槽、打卡、流量、內卷等詞；對話須合乎古修世界的身份。勝利要狹窄：勝出半招、採夠即走、講價爭得一塊靈石，都算勝利；退走、斂氣、忍耐與交易，往往才是凡人流的解法。";
+    var STYLE_ANCHORS = "【文筆錨點一·藥園勞動（原創範例，學習其語氣與格式，不要抄襲字句）】\n你天色未明便到藥園，先逐壟查看土色，再決定先為哪一壟施靈雨。靈雨術並不難，難在均勻：手抬高一寸，雨水便散；壓低一寸，又只濕到葉面。你施到第三壟，丹田已經發空，只好停下，坐在田邊等靈氣慢慢回復。管事驗收時並無稱讚，只以指尖捻起一片葉子，點頭說「這一壟算合格」，隨後在冊上記下你本月第二次沒有出錯。無人喝彩，但這一筆比喝彩有用——下次分派差事，他會先想起記得住名字的人。\n❖ P.12 | 第 4 日・黃楓谷藥園\n❖ 境界：煉氣（修為 3/9）\n❖ 靈石：7；❖ 丹藥：1；❖ 材料：2；❖ 身體狀態：略感疲憊；❖ 原著偏離：0\nA、繼續施完餘下兩壟，慢一些也要做完\nB、去任務堂詢問下個月的差事如何分派\nC、回住處打坐，補回丹田靈氣\nD、睡覺，明日再來驗收\n"+
+    "【文筆錨點二·坊市講價（原創範例）】\n攤主開價十塊，你沒有立刻還價，先拿起那瓶聚氣丹查看封口。封蠟有裂，是擺放已久的貨色，藥力最多餘下七成。你把這一點說出來，他面色不變，只將瓶子推近少許：「八塊，不買便放下。」你計算過：八塊買七成藥力，仍比正價買新貨便宜，但你身上只有十一塊，買完便沒有靈石租丹房。你最後以七塊半——即七塊靈石加一份材料——成交，攤主接過材料時掂了掂分量，才肯點頭。無人全輸，也無人全贏，雙方都只爭到自己那一線。\n❖ P.18 | 第 6 日・太南山坊市\n❖ 境界：煉氣（修為 4/9）\n❖ 靈石：3；❖ 丹藥：4；❖ 材料：1；❖ 身體狀態：精神飽滿；❖ 原著偏離：1\nA、立刻回客棧服一粒丹，試其藥力\nB、先把丹藥收好，去做任務補回靈石\nC、在坊市多走一圈，記下哪些攤檔的封蠟有裂\nD、斂氣離開，不要讓人記住你買過丹藥\n"+
+    "【文筆錨點三·知難而退（原創範例）】\n石縫深處那一點微光，你站在三丈外看了很久。進去不難，難的是出來時如何打算：左邊是塌方，右邊水聲越來越近，你手邊只有一張舊符，傷口尚未結痂。你最後沒有進去，只用炭在石壁低處做了一個不起眼的記號，退回山道。走到半路，身後傳來一聲悶響，塵土隔了片刻才湧出來。你沒有慶幸自己運氣好，只把記號的位置、時辰與水聲的方向逐一記下——退讓不是放棄，而是把這次沒有本錢取走的東西，留給下次有本錢的自己。\n❖ P.23 | 第 9 日・太嶽山脈溪谷\n❖ 境界：煉氣（修為 5/9）\n❖ 靈石：9；❖ 丹藥：1；❖ 材料：3；❖ 身體狀態：身受輕傷；❖ 原著偏離：2\nA、回藥園療傷，記下石縫的位置\nB、去坊市多買兩張符，先補足保命之物\nC、找相熟的道友商量，不要獨自再探\nD、睡覺養傷，明日再作決定";
     /* ============ 文筆修復第二遍 ============
        第一稿經本地漂移檢查唔合格時，先唔好即刻棄用：將草稿送返 DeepSeek，
        只准改文筆、節奏同呈現方式，唔准改事實、結果、數字同選項意思；
        修復稿要再過一次同一套檢查，先至採用，否則照舊跌返本地引擎。 */
-    var REPAIR_RULES = "【文筆修復第二遍・硬性限制】你而家唔係續寫，係修復一篇草稿嘅文筆。只准改：用詞、句式、節奏、段落呼吸、細節呈現、同NPC心聲嘅改寫方式（改成睇得見嘅說話、動作、停頓、取捨）。絕對唔准改：事件結果、邊個在場、人名地點、物品同數量、靈石／丹藥／材料／修為／境界／日數／原著偏離等一切數字、狀態欄數值、A–D選項嘅意思同順序、玩家行動造成嘅後果。唔准加新事件、新人物、新寶物、新轉折；唔准刪走草稿入面已經發生嘅事；唔准將失敗改成成功、將受傷改成無傷、將買唔起改成買到。修復目標：跟返凡人流校準——克制、具體勞動同小計算、收穫即刻計代價、勝利要窄、唔好即時打臉／全場震驚／秒殺／一步登天、唔好現代slang、唔好直接講穿NPC隱藏心聲。輸出格式同草稿一樣：正文2–4段、完整❖狀態欄（數值照草稿，唔好自己改數）、A、B、C、D四個選項（意思同順序照草稿）。只輸出修復後嘅成篇回覆，唔好解釋你改咗咩，唔好加任何前言後記。";
+    var REPAIR_RULES = "【文筆修復第二遍・硬性限制】你現在不是續寫，而是修復一篇草稿的文筆。只准修改：用詞、句式、節奏、段落呼吸、細節呈現，以及 NPC 心聲的改寫方式（改為看得見的說話、動作、停頓與取捨）。絕對不准修改：事件結果、在場人物、人名地點、物品與數量、靈石／丹藥／材料／修為／境界／日數／原著偏離等一切數字、狀態欄數值、A 至 D 選項的意思與順序、玩家行動造成的後果。不准加入新事件、新人物、新寶物、新轉折；不准刪去草稿中已經發生的事；不准把失敗改成成功、把受傷改成無傷、把買不起改成買到。修復目標：回到凡人流的校準——克制、具體的勞動與小額計算、收穫即刻計算代價、勝利狹窄、不得即時打臉／全場震驚／秒殺／一步登天、不得使用現代網絡用語、不得直接講穿 NPC 的隱藏心聲。若草稿含有粵語口語字詞，必須全數改寫為書面語同義詞（係→是、唔→不、嘅→的、咗→了、啲→些、嚟→來、俾／畀→給、冇→沒有、嗰→那、喺→在、瞓→睡、搵→找、佢→他、哋→們、嘢→東西、諗→想、睇→看、點解→為何、而家→現在、聽日→明日、邊個→誰、邊度→何處、呢啲→這些），正文、狀態欄場景名與選項一律不得殘留口語。輸出格式與草稿相同：正文二至四段、完整 ❖ 狀態欄（數值照草稿，不得自行改數）、A、B、C、D 四個選項（意思與順序照草稿）。只輸出修復後的整篇回覆，不要解釋修改了甚麼，不要加入任何前言後記。";
     function sceneAnchorHint(text){
       var t = String(text||"")+" "+(S?S.scene:"");
-      if (/藥園|任務|差事|傳功|雜役|閉關|修煉|打坐/.test(t)) return "今次場景近「錨點一・藥園勞動」：寫手邊工序、等候、驗收同記名呢類小事，唔好寫成熱血宣言。";
-      if (/坊市|買|賣|拍賣|講價|鋪|店|靈石/.test(t)) return "今次場景近「錨點二・坊市講價」：寫睇貨、還價、計數同雙方各爭一線，唔好寫成一擲千金或者全場矚目。";
-      if (/歷練|秘境|禁地|退|逃|山脈|探索|副本/.test(t)) return "今次場景近「錨點三・知難而退」：寫觀察、衡量退路同留記號，退走同忍耐係正當解法，唔好寫成無謀勇闖或者輕易奪寶。";
-      if (/突破|瓶頸|衝擊/.test(t)) return "今次係突破場景：寫準備、反震、一寸一寸磨同失敗代價，唔好寫成水到渠成或者天象異變式登天。";
-      return "今次場景跟返最貼近嘅錨點語氣：克制、具體、計代價，唔好滑去爽文節奏。";
+      if (/藥園|任務|差事|傳功|雜役|閉關|修煉|打坐/.test(t)) return "本次場景接近「錨點一・藥園勞動」：寫手邊的工序、等候、驗收與記名一類小事，不要寫成熱血宣言。";
+      if (/坊市|買|賣|拍賣|講價|鋪|店|靈石/.test(t)) return "本次場景接近「錨點二・坊市講價」：寫查看貨色、還價、計數與雙方各爭一線，不要寫成一擲千金或全場矚目。";
+      if (/歷練|秘境|禁地|退|逃|山脈|探索|副本/.test(t)) return "本次場景接近「錨點三・知難而退」：寫觀察、衡量退路與留下記號，退走與忍耐是正當解法，不要寫成無謀勇闖或輕易奪寶。";
+      if (/突破|瓶頸|衝擊/.test(t)) return "本次是突破場景：寫準備、反震、一寸一寸磨與失敗的代價，不要寫成水到渠成或天象異變式的登天。";
+      return "本次場景跟隨最接近的錨點語氣：克制、具體、計算代價，不要滑向爽文節奏。";
     }
     function stateSummary(){
       var th = threshold(); var ph = phaseInfo();
@@ -908,9 +921,9 @@
       return "【當前狀態摘要】身份:"+S.name+"|類型:"+(IDTYPE_LABEL[S.idType]||"原創")+"|錨點:"+(S.anchor||"無")+"|關係:"+(S.relation||"無")+"|時代地點:"+(S.era||ph.region)+"|初始限制:"+(S.limit||"無")+"|出身:"+S.origin+"|靈根:"+ROOT_LABEL[S.root]+"|宗門位置:"+S.sect+"|階段:"+ph.name+"("+ph.region+")|境界:"+realmName()+"|修為:"+S.cult+"/"+(th===null?"—":th)+"|靈石:"+S.stones+"|丹藥:"+S.pills+"|材料:"+S.mats+"|傷勢:"+BODY[S.body]+"|突破準備:"+S.prep+"|秘密/露財風險:"+S.secret+"/3|債務:"+S.debt+"|敵人:"+(S.enemies&&S.enemies.length?S.enemies.join("、"):"無")+"|道友:"+mates+"|原著偏離:"+S.deviation+"("+deviationLabel()+")|第"+S.day+"日 "+weekday()+"|場景:"+S.scene+"|目標:"+(S.goal||"—")+"|路線:"+STYLE_LABEL[S.style]+(S.extra?"|補充:"+S.extra:"");
     }
     function systemPrompt(){
-      return "你是一個《凡人修仙傳》人間篇風格的文字修仙冒險主持人，內容完全乾淨，只寫修煉、宗門、坊市、秘境、道友情誼，絕不含成人或色情內容。全程繁體中文、第二人稱「你」，描寫展開豐富，唔好只改寫玩家一句話。文筆以 STYLE_RULES 同錨點為準：DeepSeek 嘅語感同原著唔會完全一樣係正常，但節奏、克制同計代價嘅方法要跟錨點，唔好用爽文語氣填空。\n"+DISTILLED_RULES+"\n"+STYLE_RULES+"\n"+STYLE_ANCHORS+"\n"+stateSummary()+"\n"+
-      "傳訊、書信、公告要用 markdown 代碼框包裹，每行不超過 30 字。\n"+
-      "每回合結尾必須附狀態欄，逐行寫：❖ P."+S.turn+" | 第 N 日・當前場景；❖ 境界：境界名（修為 X/門檻）；❖ 靈石：N；❖ 丹藥：N；❖ 材料：N；❖ 身體狀態：狀態；❖ 原著偏離：N。數字必須係敘事之後嘅最新進度，而且唔可以違反上面硬規則（本地 parser 會 clamp 不合法變化）。然後給出 A、B、C、D 四個互動選項，停下等待玩家，不要代替玩家行動。";
+      return "你是一位《凡人修仙傳》人間篇風格的文字修仙冒險主持人，內容完全乾淨，只寫修煉、宗門、坊市、秘境與道友情誼，絕不包含成人或色情內容。全程使用繁體中文書面語、第二人稱「你」，描寫要展開豐富，不得只把玩家的一句話改寫一遍。文筆以文筆校準與錨點為準：生成模型的語感與原著不完全相同屬正常，但節奏、克制與計算代價的方法必須跟隨錨點，不得以爽文語氣填空。\n"+DISTILLED_RULES+"\n"+STYLE_RULES+"\n"+STYLE_ANCHORS+"\n"+stateSummary()+"\n"+
+      "傳訊、書信、公告須以 markdown 代碼框包裹，每行不超過三十字。\n"+
+      "每回合結尾必須附上狀態欄，逐行書寫：❖ P."+S.turn+" | 第 N 日・當前場景；❖ 境界：境界名（修為 X/門檻）；❖ 靈石：N；❖ 丹藥：N；❖ 材料：N；❖ 身體狀態：狀態；❖ 原著偏離：N。數字必須是敘事之後的最新進度，且不得違反上述硬性規則（本地解析器會鉗制不合法的變化）。其後給出 A、B、C、D 四個互動選項，停下等待玩家，不得代替玩家行動。";
     }
     function chatEndpoint(){
       var c = aiConfig();
@@ -979,6 +992,8 @@
     var SLANG_RE = /(666|yyds|絕絕子|臥槽|牛逼|打卡|好\s*chill|流量|內卷|emo|好頂|勁爆爽|爽爆)/i;
     var MINDREAD_RE = /(心諗[:：]|心想[:：]|暗想[:：]|內心深處其實|佢心裡其實想|他心中暗道[:：])/;
     var FASTPACE_RE = /(轉眼間?.{0,8}(三年|數年|十年|數月)|一夜之間就突破|連升[兩三二0-9]級|直接突破到|瞬間突破|立刻精通|當場學會|轉眼.{0,6}圓滿)/;
+    /* 粵語口語漂移：AI 正文／狀態欄／選項必須用書面語；檢查前先剔除「關係」一詞，避免「係」字誤判 */
+    var COLLOQUIAL_RE = /(係|唔|嘅|咗|啲|嚟|俾|冇|嗰|喺|瞓|搵|佢|哋|嘢|畀|諗|睇|咩|乜|點解|而家|聽日|邊個|邊度|邊啲|呢啲|呢個|呢度|嗰啲)/;
     function aiDriftCheck(text, statLines, optCount){
       var reasons = [];
       if (statLines.length < 3) reasons.push("狀態欄不足");
@@ -987,6 +1002,7 @@
       if (optCount < 4) reasons.push("選項不足四個");
       if (SHUANGWEN_RE.test(text)) reasons.push("爽文套路");
       if (SLANG_RE.test(text)) reasons.push("現代slang");
+      if (COLLOQUIAL_RE.test(String(text).replace(/關係/g, ""))) reasons.push("粵語口語（須改書面語）");
       if (MINDREAD_RE.test(text)) reasons.push("講穿NPC心聲");
       if (FASTPACE_RE.test(text)) reasons.push("節奏太快");
       /* 嚴重不合法狀態：唔只 clamp，直接跌返本地引擎 */
@@ -1051,9 +1067,9 @@
     }
     function buildRepairMessages(draft, reasons, playerText){
       var msgs = [{role:"system", content: systemPrompt()+"\n"+REPAIR_RULES}];
-      msgs.push({role:"user", content: "玩家今回合行動："+playerText});
+      msgs.push({role:"user", content: "玩家本回合的行動："+playerText});
       msgs.push({role:"assistant", content: draft});
-      msgs.push({role:"user", content: "上面嗰篇係第一稿，本地檢查驗出以下文筆／格式問題："+reasons.join("、")+"。請按【文筆修復第二遍・硬性限制】修復成篇：只改文筆、節奏同呈現，唔改事實、結果、數字、狀態欄數值同選項意思／順序。"+sceneAnchorHint(playerText)+"修復稿會再過一次同一套檢查，唔合格就會成篇棄用，所以爽文詞、現代slang、講穿心聲、跳級式節奏要清乾淨，同時狀態欄同四個選項要齊全。"});
+      msgs.push({role:"user", content: "以上是第一稿，本地檢查驗出以下文筆／格式問題："+reasons.join("、")+"。請依照【文筆修復第二遍・硬性限制】修復整篇：只改文筆、節奏與呈現，不改事實、結果、數字、狀態欄數值與選項的意思／順序。"+sceneAnchorHint(playerText)+"修復稿會再通過同一套檢查，不合格便會整篇棄用，因此爽文詞、現代網絡用語、講穿心聲、跳級式節奏與粵語口語字詞都要清除乾淨，同時狀態欄與四個選項必須齊全。"});
       return msgs;
     }
     function doAiAction(text){
@@ -1174,10 +1190,124 @@
         btn.scrollIntoView({behavior:"smooth", block:"center"});
       });
     });
-    /* 預設填第一個，等玩家可直接開始 */
-    fillPreset(PRESETS[0]);
+    /* 預設角色卡全清空：開頁唔預填任何身份（包括瀏覽器自動還原嘅舊值），
+       玩家自行填寫；撳上面嘅預設身份，先至會一鍵填入成張卡。 */
+    function clearCharacterCard(){
+      ["fName","fDao","fOrigin","fSect","fGoal","fStones","fAnchor","fRelation","fEra","fLimit","fExtra"].forEach(function(id){
+        var el = $(id); if (el) el.value = "";
+      });
+      ["fRoot","fStyle","fIdType"].forEach(function(id){
+        var el = $(id); if (el) el.value = "";
+      });
+    }
+    clearCharacterCard();
+
+    /* ============ 開局分流 ============
+       開局第一 P 不再寫死黃楓谷版本：
+       - AI 敘事模式開啟：P.1 交由 DeepSeek 按玩家所選角色卡生成（正文、狀態欄、A–D 選項）；
+         API 餘額耗盡／未設定／連接失敗／生成不合格時，直接顯示不能開局並停留在設定畫面，
+         不會以本地引擎或固定選項開局。
+       - AI 敘事模式關閉：才用本地開局，而且按身份分流（未入門鄉下凡人／散修／宗門弟子／自訂）。 */
+    function openingMode(){
+      var sect = S.sect || "";
+      if (/尚未入門|待升仙大會|未入門|未入仙門/.test(sect)) return "mortal";
+      if (/散修|無門無派/.test(sect)) return "loose";
+      if (/弟子|雜役|記名|外門|內門|門人/.test(sect)) return "sect";
+      return "generic";
+    }
+    function buildLocalOpening(){
+      var th = threshold();
+      var mode = openingMode();
+      var rootLine = mode==="mortal"
+        ? "你嘅靈根，未經測靈盤正式驗過——細時有個游方道士路過，摸過你手腕，隨口講咗句「似係"+ROOT_LABEL[S.root]+"」，真假要到升仙大會先知。"
+        : "測靈根那一日，測靈盤念出結果——"+ROOT_LABEL[S.root]+"。";
+      var paras = [
+        "你叫 "+S.name+"，"+S.origin+"。起始地點："+(S.era||"天南越國 · 太嶽山脈")+"。"+rootLine+"身份類型："+(IDTYPE_LABEL[S.idType]||"原創凡人")+(S.anchor?"，原著錨點："+S.anchor+(S.relation?"（"+S.relation+"）":""):"")+"。",
+        "你如今的位置是「"+S.sect+"」，境界：凡人——連煉氣都未入，呢點對任何身份都一樣，冇例外。儲物袋裡有靈石 "+S.stones+" 塊、丹藥 "+S.pills+" 粒、材料 "+S.mats+" 份。"+(S.limit?"初始限制講明在先："+S.limit:"")+" "+(S.extra?"你還記得："+S.extra:""),
+        canonPressurePara() || "冇原著包袱，係你嘅自由，亦係你嘅難處：冇人識你，冇人會因為一個名讓路，所有嘢都要自己賺返嚟。"
+      ];
+      var tail = "前路很長：煉氣門檻要 "+th+" 點修為，築基、結丹更是天塹，而且每一步都要計丹藥、材料、傷勢同日子。你嘅目標：「"+(S.goal||"一步步往上爬")+"」。原著引力會將某些人同事推近，但唔會替你行——你隨時可以偏離，偏離程度會記錄低，唔會強行拉返主線。";
+      var sceneName = S.scene, code, options;
+      if (mode==="mortal"){
+        paras.push("村口老槐樹下新貼了一張蓋著鎮衙印的告示，你擠在人群後面，逐字逐句讀完：三個月後，縣城外有仙師主持升仙大會，年未滿二十者皆可一試。你識字不多，但「仙」嗰個字，你認得。返到屋企，阿娘只講咗句：去得咁遠，盤纏點算？");
+        paras.push(tail);
+        sceneName = "越國·鏡州山村";
+        code = "鎮衙告示\n三月之後，縣城之外\n仙師駕臨，主持升仙大會\n年未滿二十者可往一試\n盤纏自備，逾時不候";
+        options = stdOptions(opt("去鎮上打聽升仙大會的規矩","坊市"), opt("上山採藥，攢下盤纏","歷練"), opt("照著殘缺口訣，在家試著吐納","修煉"), opt("幫家裡做農活，順便探聽消息","任務"));
+      } else if (mode==="loose"){
+        paras.push("你冇宗門收留，坊市就係你嘅棲身之所：邊間鋪肯賒賬、邊個散修消息準、邊條巷入夜唔好行，你都要自己記低。呢度冇人會主動教你，所有規矩都係撞板撞返嚟。");
+        paras.push(tail);
+        sceneName = "太南山坊市";
+        code = "太南山坊市告示\n各鋪招收學徒幫工\n供食宿，月錢另議\n無門無派者亦可自薦\n手腳勤快者優先";
+        options = stdOptions(opt("去鋪子幫工，先賺靈石安身","任務"), opt("在坊市逛一圈，摸清行情","坊市"), opt("在客棧靜室試著修煉","修煉"), opt("去太南山一帶歷練","歷練"));
+      } else if (mode==="sect"){
+        paras.push(tail);
+        code = "入門告示\n新入門者先至雜役處報到\n未入煉氣者不得擅闖內谷\n每月供奉按任務結算\n名氣不作供奉";
+        options = stdOptions(opt("去雜役處報到後開始修煉","修煉"), opt("先接一件宗門任務","任務"), opt("去太南山坊市見識一下","坊市"), opt("在山門外四處歷練","歷練"));
+      } else {
+        paras.push(tail);
+        code = "告示\n修行先安身立命\n靈石丹藥皆要自籌\n供奉按任務結算\n名氣不作供奉";
+        options = stdOptions(opt("先安頓下來，試著修煉","修煉"), opt("去附近坊市見識一下","坊市"), opt("出外四處歷練","歷練"), opt("休息瞓覺，養足精神","瞓覺"));
+      }
+      if (PASSIVE[S.root]) paras.push(PASSIVE[S.root]);
+      return { scene: sceneName, paras: paras.filter(Boolean), code: code, options: options };
+    }
+    function openingPrompt(){
+      return "【開局・第一回合 P.1】這是全新一局的第一回合，請根據系統訊息中的角色卡與當前狀態摘要，撰寫開局正文。\n"+
+      "角色卡要點——名字："+S.name+"；出身："+(S.origin||"未填")+"；靈根："+ROOT_LABEL[S.root]+"；宗門／身份："+(S.sect||"未填")+"；時代／起始地點："+(S.era||"天南越國")+"；身份類型："+(IDTYPE_LABEL[S.idType]||"原創凡人")+(S.anchor?"；原著錨點："+S.anchor+(S.relation?"（"+S.relation+"）":""):"")+"；目標："+(S.goal||"一步步往上爬")+"；初始限制："+(S.limit||"無")+(S.extra?"；補充設定："+S.extra:"")+"。\n"+
+      "寫法要求：交代主角此刻的所在地、處境、手邊的具體事物與眼前的一件小事；嚴守初始限制——所有身份一律是凡人、未入煉氣，沒有高境界、法寶與預知未來的記憶。結尾附上完整狀態欄，數字必須與狀態摘要的起始值一致（靈石、丹藥、材料、修為、原著偏離不得擅自增減），再給出 A、B、C、D 四個選項。選項必須切合此身份與起始地點：尚未入門的鄉下凡人，選項應圍繞村中生活、進鎮打聽升仙大會、上山採藥、籌措盤纏；坊市學徒或散修，選項應圍繞鋪子幫工、坊市行情與自行修煉；宗門弟子，才可出現雜役報到、任務堂、傳功閣等選項。不得預設所有人都在黃楓谷。全文（正文、狀態欄場景名、選項）一律使用繁體書面語，禁止粵語口語字詞。";
+    }
+    function hideStartError(){ var el = $("startError"); if (el){ el.hidden = true; el.textContent = ""; } }
+    function showStartError(err){
+      var msg = err && err.message ? String(err.message) : "";
+      var reason;
+      if (/402/.test(msg)) reason = "DeepSeek 餘額不足（HTTP 402），請先充值或更換 API Key。";
+      else if (/401|403/.test(msg)) reason = "API Key 無效或未獲授權（"+msg+"）。";
+      else if (/AI漂移/.test(msg)) reason = "AI 生成的第一回合未通過檢查（"+msg.replace(/^AI漂移[:：]?/, "")+"），自動修復後仍不合格。";
+      else reason = "無法連接 DeepSeek（"+(msg || "未知錯誤")+"），可能係代傳服務未設定或網絡問題。";
+      var el = $("startError");
+      if (!el) return;
+      el.textContent = "不能開局：AI 敘事模式已開啟，開局第一 P 必須由 DeepSeek 按你所選的角色卡生成。"+reason+"請檢查頁尾「站主設定」的連接後再試，或取消勾選上面嘅 AI 敘事模式，改用內置開局。";
+      el.hidden = false;
+      el.scrollIntoView({behavior:"smooth", block:"center"});
+    }
+    var starting = false;
+    function startGameWithAi(){
+      starting = true;
+      var btn = $("startBtn");
+      btn.disabled = true; btn.textContent = "DeepSeek 生成開局中……";
+      var req;
+      try { req = doAiAction(openingPrompt()); }
+      catch(e){ req = Promise.reject(e); }
+      req.then(function(res){
+        $("setupView").hidden = true; $("gameView").hidden = false;
+        renderQuick(); renderHeader();
+        if (res.repaired){
+          var fixNote = { you:"", paras:["（第一稿文筆漂移："+(res.repairReasons||[]).join("、")+"。已自動行文筆修復第二遍——只改文筆同節奏，事實、數字同選項意思冇改，修復稿亦已再過一次檢查。）"], code:null, stat:statusText() };
+          S.log.push(fixNote); renderTurn(fixNote);
+        }
+        commit("", res);
+        window.scrollTo({top:0, behavior:"smooth"});
+      }).catch(function(err){
+        /* AI 開局失敗：唔入遊戲畫面、唔出固定 P.1，直接顯示不能開局 */
+        S = null;
+        showStartError(err);
+      }).finally(function(){
+        starting = false;
+        btn.disabled = false; btn.textContent = "以呢個身份開始修仙";
+      });
+    }
+    /* 設定畫面同遊戲畫面兩個 AI 開關保持同步 */
+    function syncAiToggle(fromSetup){
+      var inGame = $("aiToggle"), inSetup = $("aiToggleSetup");
+      if (!inGame || !inSetup) return;
+      if (fromSetup) inGame.checked = inSetup.checked; else inSetup.checked = inGame.checked;
+    }
+    if ($("aiToggleSetup")) $("aiToggleSetup").addEventListener("change", function(){ syncAiToggle(true); });
+    if ($("aiToggle")) $("aiToggle").addEventListener("change", function(){ syncAiToggle(false); });
 
     $("startBtn").addEventListener("click", function(){
+      if (starting) return;
       var p = {
         name: $("fName").value.trim(), dao: $("fDao").value.trim(),
         origin: $("fOrigin").value.trim(), root: $("fRoot").value,
@@ -1190,22 +1320,14 @@
         limit: $("fLimit") ? $("fLimit").value.trim() : ""
       };
       if (!p.name){ $("fName").focus(); $("fName").placeholder="請先填上名字"; return; }
+      if (!p.root){ $("fRoot").focus(); return; }
+      if (!p.style){ $("fStyle").focus(); return; }
+      hideStartError();
       S = newState(p);
+      if ($("aiToggle").checked){ startGameWithAi(); return; }
       $("setupView").hidden = true; $("gameView").hidden = false;
       renderQuick(); renderHeader();
-      var th = threshold();
-      var passivePara = PASSIVE[S.root] ? [PASSIVE[S.root]] : [];
-      var opening = {
-        paras: [
-          "你叫 "+S.name+"，"+S.origin+"。起始地點："+(S.era||"天南越國 · 太嶽山脈")+"。測靈根那一日，測靈盤念出結果——"+ROOT_LABEL[S.root]+"。身份類型："+(IDTYPE_LABEL[S.idType]||"原創凡人")+(S.anchor?"，原著錨點："+S.anchor+(S.relation?"（"+S.relation+"）":""):"")+"。",
-          "你如今的位置是「"+S.sect+"」，境界：凡人——連煉氣都未入，呢點對任何身份都一樣，冇例外。儲物袋裡有靈石 "+S.stones+" 塊、丹藥 "+S.pills+" 粒、材料 "+S.mats+" 份。"+(S.limit?"初始限制講明在先："+S.limit:"")+" "+(S.extra?"你還記得："+S.extra:""),
-          canonPressurePara() || "冇原著包袱，係你嘅自由，亦係你嘅難處：冇人識你，冇人會因為一個名讓路，所有嘢都要自己賺返嚟。",
-          "前路很長：煉氣門檻要 "+th+" 點修為，築基、結丹更是天塹，而且每一步都要計丹藥、材料、傷勢同日子。你嘅目標：「"+(S.goal||"一步步往上爬")+"」。原著引力會將某些人同事推近，但唔會替你行——你隨時可以偏離，偏離程度會記錄低，唔會強行拉返主線。"
-        ].concat(passivePara).filter(Boolean),
-        code: "入門告示\n新入門者先至雜役處報到\n未入煉氣者不得擅闖內谷\n每月供奉按任務結算\n名氣不作供奉",
-        options: stdOptions(opt("去雜役處報到後開始修煉","修煉"), opt("先接一件宗門任務","任務"), opt("去太南山坊市見識一下","坊市"), opt("在山門外四處歷練","歷練"))
-      };
-      commit("", opening);
+      commit("", buildLocalOpening());
       window.scrollTo({top:0, behavior:"smooth"});
     });
 
