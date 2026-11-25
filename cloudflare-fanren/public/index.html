@@ -84,9 +84,24 @@
         background:var(--gold-soft);font-size:.95rem;letter-spacing:.02em;word-break:break-all}
       .phasebox{margin-top:10px;padding:10px 13px;border:1px solid var(--line);border-radius:9px;background:var(--panel2);font-size:.92rem;line-height:1.65}
       .phasebox b{color:var(--accent)}
-      #log{display:flex;flex-direction:column;gap:16px}
-      .turn{border-bottom:1px solid var(--line);padding-bottom:14px}
-      .turn:last-child{border-bottom:none;padding-bottom:0}
+      #log{display:flex;flex-direction:column;gap:10px}
+      .turn{border:1px solid var(--line);border-radius:11px;background:var(--panel);overflow:hidden}
+      .turn>summary.turn-sum{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;
+        min-height:44px;padding:9px 14px;background:var(--panel2);color:var(--ink-soft);line-height:1.5}
+      .turn>summary.turn-sum::-webkit-details-marker{display:none}
+      .turn>summary.turn-sum::after{content:"▾";margin-left:2px;font-size:.8rem;flex:0 0 auto;color:var(--ink-soft)}
+      .turn[open]>summary.turn-sum::after{content:"▴"}
+      .turn[open]>summary.turn-sum{border-bottom:1px solid var(--line)}
+      .turn>summary.turn-sum:hover{color:var(--accent)}
+      .turn-p{flex:0 0 auto;font-family:"Noto Sans TC",sans-serif;font-size:.82rem;font-weight:700;
+        letter-spacing:.03em;color:var(--accent);background:var(--chip);border:1px solid var(--line);
+        border-radius:999px;padding:2px 9px;line-height:1.6;white-space:nowrap}
+      .turn-preview{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+        font-size:.9rem;color:inherit}
+      .turn-hint{flex:0 0 auto;font-size:.78rem;color:var(--ink-soft);white-space:nowrap}
+      .turn[open] .turn-hint-open{display:none}
+      .turn:not([open]) .turn-hint-close{display:none}
+      .turn-body{padding:12px 14px 14px}
       .turn .you{color:var(--accent);font-weight:700;margin:0 0 6px;font-size:.95rem}
       .turn .story p{margin:0 0 .8em;text-align:justify}
       .turn .story p:last-of-type{margin-bottom:0}
@@ -486,16 +501,37 @@
       }).join("");
     }
     function renderTurn(entry){
-      var div = document.createElement("div");
+      /* 開新一個 P 時，自動摺疊之前所有 P：舊回合只留一行摘要（P 編號＋行動／首句），
+         㩒摘要隨時可以再展開睇返全文；最新一回合保持展開。 */
+      var logBox = $("log");
+      var prevTurns = logBox.querySelectorAll(".turn");
+      prevTurns.forEach(function(el){ el.removeAttribute("open"); });
+      var div = document.createElement("details");
       div.className="turn";
-      var html="";
+      div.open = true;
+      var pMatch = entry.stat ? String(entry.stat).match(/P\.\s*\d+/) : null;
+      var pLabel = pMatch ? pMatch[0].replace(/\s+/g,"") : ("P."+(prevTurns.length+1));
+      var preview = "";
+      if (entry.you) preview = entry.you;
+      else if (entry.paras && entry.paras.length) preview = entry.paras[0];
+      preview = String(preview||"").replace(/\s+/g," ").trim();
+      if (!preview && entry.stat){
+        var sm = String(entry.stat).match(/P\.\s*\d+\s*\|\s*([^\/]+)/);
+        if (sm) preview = sm[1].trim();
+      }
+      if (preview.length>52) preview = preview.slice(0,52)+"…";
+      var html = "<summary class='turn-sum'><span class='turn-p'>"+esc(pLabel)+"</span>"+
+        "<span class='turn-preview'>"+esc(preview)+"</span>"+
+        "<span class='turn-hint turn-hint-open'>展開</span><span class='turn-hint turn-hint-close'>摺疊</span></summary>";
+      html += "<div class='turn-body'>";
       if(entry.you) html += "<p class='you'>▸ 你："+esc(entry.you)+"</p>";
       html += "<div class='story'>";
       entry.paras.forEach(function(p){ html += "<p>"+esc(p)+"</p>"; });
       if(entry.code) html += "<pre>"+esc(wrap30(entry.code))+"</pre>";
       html += "</div><div class='stat'>"+esc(entry.stat)+"</div>";
+      html += "</div>";
       div.innerHTML = html;
-      $("log").appendChild(div);
+      logBox.appendChild(div);
       div.scrollIntoView({behavior:"smooth", block:"start"});
     }
     function renderOptions(opts){
@@ -1172,7 +1208,7 @@
       commit("", opening);
       window.scrollTo({top:0, behavior:"smooth"});
     });
-//test
+
     /* ============ 站主設定開關 ============ */
     $("ownerToggle").addEventListener("click", function(){
       var box = $("apiBox");
