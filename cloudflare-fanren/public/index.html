@@ -1,0 +1,1175 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>凡人修仙傳模擬器</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+    <style>
+      :root{
+        --bg:#f4f1e8; --bg2:#ece7d8; --panel:#fbf9f3; --panel2:#f1ecdd;
+        --ink:#26302a; --ink-soft:#5a665e; --line:#d8d0ba;
+        --accent:#2f5d50; --accent-ink:#ffffff; --gold:#a07d2c; --gold-soft:#efe3c2;
+        --danger:#9c3b2e; --chip:#e7e0cb; --pre-bg:#22302a; --pre-ink:#e9e4cf;
+        --shadow:0 10px 30px rgba(38,48,42,.10);
+      }
+      @media (prefers-color-scheme: dark){
+        :root{
+          --bg:#131714; --bg2:#171c18; --panel:#1d231e; --panel2:#232a24;
+          --ink:#e6e2d2; --ink-soft:#a9b0a2; --line:#39423a;
+          --accent:#7fb69f; --accent-ink:#12211b; --gold:#d3ab55; --gold-soft:#33301f;
+          --danger:#e08a7a; --chip:#2a332b; --pre-bg:#0e130f; --pre-ink:#dfe3c8;
+          --shadow:0 10px 30px rgba(0,0,0,.35);
+        }
+      }
+      *{box-sizing:border-box}
+      html{scroll-behavior:smooth}
+      body{margin:0;background:var(--bg);color:var(--ink);
+        font-family:"Noto Serif TC","Songti TC","PMingLiU",serif;line-height:1.85;}
+      button,[role="button"],select,input,textarea{font-family:inherit}
+      button,select,input:not([type="checkbox"]),textarea{font-size:1rem}
+      button{min-height:44px;cursor:pointer}
+      .sans{font-family:"Noto Sans TC","PingFang TC",sans-serif}
+      .wrap{max-width:860px;margin:0 auto;padding:20px 16px 40px}
+      h1{font-size:1.9rem;font-weight:900;letter-spacing:.06em;margin:6px 0 2px}
+      h2{font-size:1.25rem;font-weight:900;letter-spacing:.04em;margin:0 0 10px}
+      h3{font-size:1.05rem;font-weight:700;margin:0 0 8px}
+      .sub{color:var(--ink-soft);margin:0 0 18px;font-size:.98rem}
+      .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+        padding:20px;margin-bottom:18px;box-shadow:var(--shadow)}
+      .world{background:var(--panel2);border:1px solid var(--line);border-left:5px solid var(--accent);
+        border-radius:10px;padding:16px 18px;margin-bottom:18px}
+      .world p{margin:0;text-align:justify}
+      .presets{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+      .preset{text-align:left;background:var(--panel2);border:1px solid var(--line);border-radius:12px;
+        padding:12px 14px;color:var(--ink);line-height:1.55}
+      .preset:hover{border-color:var(--accent)}
+      .preset b{display:block;font-size:1.05rem;margin-bottom:2px}
+      .preset span{font-size:.86rem;color:var(--ink-soft)}
+      .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+      .field{display:flex;flex-direction:column;gap:5px}
+      .field.full{grid-column:1/-1}
+      .field label{font-size:.9rem;font-weight:700;letter-spacing:.03em}
+      .field input,.field select,.field textarea{
+        border:1px solid var(--line);border-radius:9px;background:var(--panel);
+        color:var(--ink);padding:10px 12px;min-height:44px;width:100%}
+      .field textarea{min-height:64px;resize:vertical;line-height:1.6}
+      .hint{font-size:.82rem;color:var(--ink-soft)}
+      .btn{border-radius:10px;border:1px solid var(--accent);background:var(--accent);
+        color:var(--accent-ink);padding:10px 20px;font-weight:700;letter-spacing:.05em}
+      .btn.ghost{background:transparent;color:var(--accent)}
+      .btn.gold{background:var(--gold);border-color:var(--gold);color:#fff}
+      @media (prefers-color-scheme: dark){.btn.gold{color:#1d1a0e}}
+      .btn.small{padding:6px 14px;min-height:38px;font-size:.92rem}
+      .btn:disabled{opacity:.45;cursor:not-allowed}
+      .startrow{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+      /* ---- game ---- */
+      .idcard{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+      .idcard .who{flex:1 1 260px}
+      .idcard .who .nm{font-size:1.45rem;font-weight:900;letter-spacing:.05em}
+      .idcard .who .meta{color:var(--ink-soft);font-size:.93rem;line-height:1.7}
+      .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+      .chip{background:var(--chip);border:1px solid var(--line);border-radius:999px;
+        padding:4px 12px;font-size:.88rem;line-height:1.6}
+      .chip b{color:var(--accent)}
+      .progwrap{flex:1 1 220px;min-width:200px}
+      .progbar{height:12px;border-radius:99px;background:var(--chip);border:1px solid var(--line);overflow:hidden}
+      .progbar>i{display:block;height:100%;background:var(--accent);width:0%;transition:width .5s ease}
+      .proglabel{font-size:.85rem;color:var(--ink-soft);margin-top:4px}
+      .statusline{margin-top:12px;padding:9px 13px;border:1px dashed var(--gold);border-radius:9px;
+        background:var(--gold-soft);font-size:.95rem;letter-spacing:.02em;word-break:break-all}
+      .phasebox{margin-top:10px;padding:10px 13px;border:1px solid var(--line);border-radius:9px;background:var(--panel2);font-size:.92rem;line-height:1.65}
+      .phasebox b{color:var(--accent)}
+      #log{display:flex;flex-direction:column;gap:16px}
+      .turn{border-bottom:1px solid var(--line);padding-bottom:14px}
+      .turn:last-child{border-bottom:none;padding-bottom:0}
+      .turn .you{color:var(--accent);font-weight:700;margin:0 0 6px;font-size:.95rem}
+      .turn .story p{margin:0 0 .8em;text-align:justify}
+      .turn .story p:last-of-type{margin-bottom:0}
+      .turn pre{background:var(--pre-bg);color:var(--pre-ink);border-radius:9px;
+        padding:12px 14px;font-size:.92rem;line-height:1.7;overflow-x:auto;margin:.6em 0;
+        font-family:"Noto Sans TC",monospace;white-space:pre}
+      .turn .stat{margin-top:.7em;font-size:.9rem;color:var(--gold);letter-spacing:.02em;word-break:break-all}
+      .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+      .opt{text-align:left;background:var(--panel2);border:1px solid var(--line);border-radius:11px;
+        padding:11px 14px;color:var(--ink);line-height:1.6}
+      .opt:hover{border-color:var(--accent)}
+      .opt b{color:var(--accent);margin-right:6px}
+      .quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+      .quick button{background:transparent;border:1px solid var(--line);color:var(--ink-soft);
+        border-radius:999px;padding:6px 14px;min-height:38px;font-size:.9rem}
+      .quick button:hover{border-color:var(--accent);color:var(--accent)}
+      .inputrow{display:flex;gap:10px;margin-top:14px;align-items:flex-end}
+      .inputrow textarea{flex:1;border:1px solid var(--line);border-radius:10px;background:var(--panel);
+        color:var(--ink);padding:10px 12px;min-height:48px;resize:vertical;line-height:1.6}
+      .mates{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+      .mate{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:10px 12px;line-height:1.6}
+      .mate b{font-size:1rem}
+      .mate .small{font-size:.84rem;color:var(--ink-soft)}
+      .mate .rel{color:var(--gold);font-size:.86rem;font-weight:700}
+      .empty-note{color:var(--ink-soft);font-size:.93rem}
+      .toggleline{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+      .toggleline label{display:flex;align-items:center;gap:8px;min-height:44px;cursor:pointer;font-size:.95rem}
+      .toggleline input[type="checkbox"]{width:20px;height:20px;accent-color:var(--accent)}
+      footer{margin-top:26px;text-align:center;color:var(--ink-soft);font-size:.85rem;line-height:1.9}
+      .ownerlink{display:inline-block;min-height:36px;padding:6px 10px;color:var(--ink-soft);
+        font-size:.8rem;text-decoration:underline;text-underline-offset:3px;background:none;border:none;cursor:pointer}
+      #apiBox .field{margin-bottom:12px}
+      .testlog{font-size:.88rem;color:var(--ink-soft);white-space:pre-wrap;line-height:1.7;
+        background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:10px 12px;display:none}
+      [hidden]{display:none !important}
+      @media (max-width:640px){
+        .presets{grid-template-columns:1fr}
+        .grid{grid-template-columns:1fr}
+        .opts{grid-template-columns:1fr}
+        h1{font-size:1.6rem}
+        .panel{padding:16px}
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <!-- ================= 身份設定 ================= -->
+      <section id="setupView">
+        <h1>凡人修仙傳模擬器</h1>
+        <p class="sub">修仙冒險（乾淨版）——由凡人開始修煉、突破境界、結交道友。</p>
+
+        <div class="world">
+          <p>你生在天南越國一個靈氣稀薄的角落。修仙者高高在上，御劍飛行、移山填海，凡人在他們眼中不過螻蟻。想逆天改命，先要有靈根——沒有靈根，連煉氣的門檻都摸不到；有了靈根，也還要靠機緣、毅力和一條肯捱的命。這世上有宗門收徒、有散修掙扎求存，有坊市交易丹藥法器，有秘境埋著一步登天的造化，也埋著無數枯骨。境界由凡人起步，煉氣、築基、結丹、元嬰，直到傳說中的化神——每一步，都是生死關。你沒有退路，只能一步一步往上爬。</p>
+        </div>
+
+        <div class="panel">
+          <h2>玩家角色卡</h2>
+          <p class="hint" style="margin-top:-4px">所有身份一律由凡人／未入煉氣開始——包括原著人物：只用年輕版、未成名版或平行分支，唔會白送高境界、法寶或全知記憶。原著身份帶嚟嘅係關係、聲望壓力、宗門位置、起始地點同隱藏特質；你嘅選擇可以令故事偏離原著，引擎會追蹤偏離程度，唔會強行拉返去韓立主線。</p>
+          <div class="presets">
+            <button type="button" class="preset" data-preset="0"><b>山村少年</b><span>偽靈根 · 機緣深厚 · 靈石少<br />韓立式開局：青牛鎮出身，靠毅力硬爬。</span></button>
+            <button type="button" class="preset" data-preset="1"><b>宗門雜役</b><span>雙靈根 · 資源穩定 · 有宗門靠山<br />黃楓谷雜役弟子，未入煉氣，先求站穩。</span></button>
+            <button type="button" class="preset" data-preset="2"><b>坊市學徒散修</b><span>三靈根 · 自由但艱難 · 無依無靠<br />太南山坊市幫工，消息靈通，一無所有。</span></button>
+            <button type="button" class="preset" data-preset="3"><b>陳師兄嘅細佬</b><span>原著關係者 · 黃楓谷 · 聲望壓力<br />有兄長光環，亦有人等你出醜；本事要自己練。</span></button>
+            <button type="button" class="preset" data-preset="4"><b>玄骨（年輕版）</b><span>原著人物 · 平行分支 · 時代唔夾要合理化<br />未成名、未入煉氣，無後來修為同法寶，只有心性同隱藏特質。</span></button>
+            <button type="button" class="preset" data-preset="5"><b>韓立同鄉（關係者）</b><span>原著關係者 · 青牛鎮同鄉<br />熟唔代表分到機緣；可以同佢分道，行自己條路。</span></button>
+          </div>
+          <div class="grid">
+            <div class="field"><label for="fName">名字</label><input id="fName" type="text" placeholder="例如：韓立" /></div>
+            <div class="field"><label for="fDao">道號（未有可留空）</label><input id="fDao" type="text" placeholder="凡人多半未有道號" /></div>
+            <div class="field"><label for="fOrigin">出身</label><input id="fOrigin" type="text" placeholder="例如：越國鏡州青牛鎮五里溝" /></div>
+            <div class="field"><label for="fRoot">靈根</label>
+              <select id="fRoot">
+                <option value="tian">天靈根（萬中無一）</option>
+                <option value="shuang">雙靈根</option>
+                <option value="san">三靈根</option>
+                <option value="wei" selected>偽靈根（四屬雜靈根）</option>
+                <option value="dark">變異靈根：暗</option>
+                <option value="thunder">變異靈根：雷</option>
+                <option value="ice">變異靈根：冰</option>
+                <option value="wind">變異靈根：風</option>
+              </select>
+            </div>
+            <div class="field"><label for="fSect">宗門／身份</label>
+              <input id="fSect" type="text" list="sectList" placeholder="例如：黃楓谷記名弟子" />
+              <datalist id="sectList">
+                <option value="黃楓谷記名弟子"></option>
+                <option value="黃楓谷雜役弟子"></option>
+                <option value="掩月宗外門弟子"></option>
+                <option value="清虛門記名弟子"></option>
+                <option value="巨劍門雜役弟子"></option>
+                <option value="化刀塢記名弟子"></option>
+                <option value="天闕堡外門弟子"></option>
+                <option value="靈獸山雜役弟子"></option>
+                <option value="無門無派（散修）"></option>
+                <option value="尚未入門（待升仙大會）"></option>
+              </datalist>
+            </div>
+            <div class="field"><label for="fGoal">目標</label><input id="fGoal" type="text" placeholder="例如：築基成功，衣錦還鄉" /></div>
+            <div class="field"><label for="fStones">起始靈石</label><input id="fStones" type="number" min="0" max="999" step="1" value="3" /></div>
+            <div class="field"><label for="fStyle">性格路線</label>
+              <select id="fStyle">
+                <option value="steady" selected>穩健（修為起步稍高，突破較穩）</option>
+                <option value="bold">激進（修煉進境快，風險亦高）</option>
+                <option value="lucky">機緣型（歷練奇遇較多，修為起步低）</option>
+              </select>
+            </div>
+            <div class="field"><label for="fIdType">身份類型</label>
+              <select id="fIdType">
+                <option value="original" selected>原創凡人（無原著包袱）</option>
+                <option value="canon_young">原著人物（年輕／未入煉氣版）</option>
+                <option value="canon_relation">原著人物關係者（親屬／師弟／同鄉等）</option>
+                <option value="canon_branch">平行分支人物（時代或地點唔夾，另開一線）</option>
+              </select>
+            </div>
+            <div class="field"><label for="fAnchor">原著錨點（無可留空）</label><input id="fAnchor" type="text" placeholder="例如：陳師兄／玄骨／韓立／南宮婉" /></div>
+            <div class="field"><label for="fRelation">與錨點嘅關係</label><input id="fRelation" type="text" placeholder="例如：親細佬／同門師弟／本人（年輕版）／故人之後" /></div>
+            <div class="field"><label for="fEra">時代／起始地點</label><input id="fEra" type="text" placeholder="例如：黃楓谷時期 · 太嶽山脈／亂星海前 · 平行分支" /></div>
+            <div class="field full"><label for="fLimit">初始限制（系統會照住執行）</label>
+              <textarea id="fLimit" placeholder="例如：未入煉氣、無法寶、唔知未來劇情；受兄長聲望壓力，出錯會傳返家族；玄骨年輕版只有殘缺舊記憶，唔當得真。"></textarea>
+              <span class="hint">限制唔係懲罰，係令身份可信：關係者唔會自動識晒原著人物，原著人物亦唔會一開局就識御劍、煉丹或知道邊度有寶。</span>
+            </div>
+            <div class="field full"><label for="fExtra">補充設定（可留空）</label>
+              <textarea id="fExtra" placeholder="例如：隨身帶著一隻來歷不明的小瓶子；家中有一位臥病的老母。"></textarea>
+            </div>
+          </div>
+          <div class="startrow">
+            <button type="button" class="btn" id="startBtn">以呢個身份開始修仙</button>
+            <span class="hint">越國七大派：黃楓谷、掩月宗、清虛門、巨劍門、化刀塢、天闕堡、靈獸山。</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 遊戲主畫面 ================= -->
+      <section id="gameView" hidden>
+        <div class="panel">
+          <div class="idcard">
+            <div class="who">
+              <div class="nm" id="idName">—</div>
+              <div class="meta" id="idMeta">—</div>
+              <div class="chips" id="idChips"></div>
+            </div>
+            <div class="progwrap">
+              <h3 style="margin-bottom:4px">修為進度</h3>
+              <div class="progbar"><i id="progFill"></i></div>
+              <div class="proglabel" id="progLabel">—</div>
+              <div class="proglabel" id="passiveLabel"></div>
+              <div class="proglabel" id="lifeLabel"></div>
+            </div>
+          </div>
+          <div class="phasebox" id="phaseBox">—</div>
+          <div class="statusline" id="statusLine">—</div>
+        </div>
+
+        <div class="panel">
+          <h2>修仙歷程</h2>
+          <div id="log"></div>
+          <div class="opts" id="options"></div>
+          <div class="quick" id="quickBar"></div>
+          <div class="inputrow">
+            <textarea id="freeInput" rows="2" placeholder="自由輸入行動，例如：去坊市買聚氣丹／閉關修煉／同道友切磋……"></textarea>
+            <button type="button" class="btn" id="sendBtn">行動</button>
+          </div>
+          <div class="toggleline" style="margin-top:10px">
+            <label><input type="checkbox" id="aiToggle" /> AI 敘事模式（需站主設定 DeepSeek；未設定時自動用內置引擎）</label>
+            <label><input type="checkbox" id="repairToggle" checked /> 文筆修復第二遍（第一稿漂移時自動送返 AI 只改文筆，會多一次 API 呼叫）</label>
+            <button type="button" class="btn ghost small" id="restartBtn">重新開始</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>道友（<span id="mateCount">0</span>/5）</h2>
+          <div class="mates" id="mates"><p class="empty-note">尚未結識道友。第一次出外歷練之後，或會遇上有緣人。</p></div>
+        </div>
+      </section>
+
+      <footer>
+        <div>凡人修仙傳模擬器 · 天南越國 · 太嶽山脈<br />吾命由我不由天——一步一步，慢慢爬。</div>
+        <button type="button" class="ownerlink" id="ownerToggle">站主設定</button>
+      </footer>
+
+      <!-- ================= 站主設定（預設隱藏） ================= -->
+      <section class="panel" id="apiBox" hidden>
+        <h2>接 AI 設定（方案 2 • DeepSeek）— 可選</h2>
+        <p class="hint">冇貼 Key：經伺服器代傳（相對路徑 <b>/api/chat</b> 同 <b>/api/balance</b>，需 Cloudflare Pages Functions 代傳）。貼咗自己條 Key：瀏覽器直連 <b>api.deepseek.com</b>。未啟用 AI 時，遊戲全程行內置引擎，唔受影響。開啟「文筆修復第二遍」後，第一稿被驗出爽文／slang／講穿心聲／節奏太快／格式漂移嗰回合，會自動多呼叫一次 API 只修文筆（唔改事實同數字），修復稿再驗一次先採用；境界跳級、靈石暴增呢類事實歪曲唔會修，會直接跌返內置引擎。</p>
+        <div class="field"><label for="apiKey">DeepSeek API Key（可留空，用代傳）</label>
+          <input id="apiKey" type="password" placeholder="sk-…" autocomplete="off" /></div>
+        <div class="field"><label for="apiModel">模型</label>
+          <select id="apiModel">
+            <option value="deepseek-chat" selected>deepseek-chat</option>
+            <option value="deepseek-reasoner">deepseek-reasoner</option>
+          </select></div>
+        <div class="startrow">
+          <button type="button" class="btn gold" id="testBtn">測試連接</button>
+          <span class="hint" id="balanceHint"></span>
+        </div>
+        <div class="testlog sans" id="testLog"></div>
+      </section>
+    </main>
+
+    <script>
+    "use strict";
+    /* ============ 常量：境界 / 門檻（桌遊規則） ============ */
+    var REALMS = ["凡人","煉氣","築基","結丹","元嬰","化神"];
+    var THRESH = { /* [凡人→煉氣, 煉氣→築基, 築基→結丹, 結丹→元嬰] */
+      tian:[5,8,12,16], shuang:[5,8,13,17], san:[6,9,14,18], wei:[7,9,15,19], variant:[5,8,13,17]
+    };
+    var ROOT_LABEL = {tian:"天靈根",shuang:"雙靈根",san:"三靈根",wei:"偽靈根",
+      dark:"變異靈根·暗",thunder:"變異靈根·雷",ice:"變異靈根·冰",wind:"變異靈根·風"};
+    var ROOT_GROUP = {tian:"tian",shuang:"shuang",san:"san",wei:"wei",
+      dark:"variant",thunder:"variant",ice:"variant",wind:"variant"};
+    var PASSIVE = {
+      dark:"暗靈根被動：命懸一線之際，總有一線生機——瀕死時骰運加成，兇險關頭較易脫身。",
+      thunder:"雷靈根被動：修為越深，雷霆之威越盛——高修為時戰力加成，出手自帶雷光。",
+      ice:"冰靈根被動：冰心護體——受重傷時寒氣自動護住要害，傷勢減免一截。",
+      wind:"風靈根被動：身法如風——修為尚淺時反而靈活，低修為時戰力加成，逃遁一流。"
+    };
+    var BODY = ["精神飽滿","略感疲憊","身受輕傷","重傷","走火入魔邊緣"];
+    var WEEK = ["星期一","星期二","星期三","星期四","星期五","星期六","星期日"];
+    var STYLE_LABEL = {steady:"穩健",bold:"激進",lucky:"機緣型"};
+    var LIFE_CAP = [80,120,200,500,1000,2000];
+    /* 人間篇階段：按境界解鎖地域、試煉與壓力來源（只用原著事實作錨，場景皆原創） */
+    var PHASES = [
+      {name:"黃楓谷求存", region:"天南 · 越國 · 太嶽山脈", desc:"先活落去：藥園、傳功閣、雜役規矩與坊市行情，樣樣都要計。築基丹只得一條窄路，血色禁地未開之前，儲丹藥、材料同人情，比急住威更重要。", unlock:"可去：藥園／傳功閣／太南山坊市／太嶽山脈；煉氣後可備血色禁地。"},
+      {name:"築基之後 · 越國動盪", region:"天南 · 越國（風聲漸緊）", desc:"築基唔係安穩，係另一種稀缺：洞府、功法、材料都要爭，宗門差遣亦更重。越國修仙界風聲漸緊，站隊、欠人情同露財，都會留尾巴。", unlock:"可去：宗門差遣／坊市大拍賣／越國各派交界；要為離開天南留後路。"},
+      {name:"亂星海漂泊", region:"亂星海 · 島嶼與海路", desc:"天南去唔返，唯有喺海島之間計住靈石同船期。星宮與逆星盟互相牽制，海獸、風暴同坐船等候，先係日常；虛天殿只係傳聞，未到結丹莫貪。", unlock:"可去：海島坊市／外海獵獸／星宮與逆星盟消息；結丹後留意虛天殿傳聞。"},
+      {name:"天南回歸 · 大晉壓力", region:"天南 — 大晉 · 人界後段", desc:"元嬰之後，壽元同飛升先係真壓力。大晉宗門更大、規矩更深，空間節點同化神門檻唔係靠蠻力撞得開；墜魔谷呢類絕地，入去之前要計退路。", unlock:"可去：墜魔谷外圍／大晉坊市與宗門消息／空間節點傳聞；每一步都要留退路。"}
+    ];
+    function phaseIndex(){ if(!S) return 0; if(S.realm<=1) return 0; if(S.realm===2) return 1; if(S.realm===3) return 2; return 3; }
+    function phaseInfo(){ return PHASES[phaseIndex()]; }
+
+    var IDTYPE_LABEL = {original:"原創凡人", canon_young:"原著人物（年輕版）", canon_relation:"原著關係者", canon_branch:"平行分支人物"};
+    /* ============ 預設身份（全部凡人，未入煉氣；原著人物一律年輕版） ============ */
+    var PRESETS = [
+      {name:"韓立",dao:"",origin:"越國鏡州青牛鎮五里溝，山村農家子弟",root:"wei",
+       sect:"黃楓谷記名弟子",goal:"活下去，一步一步爬到築基",stones:3,style:"steady",
+       idType:"canon_young",anchor:"韓立",relation:"本人（年輕版）",era:"七玄門／黃楓谷前段 · 越國鏡州至太嶽山脈",
+       limit:"未入煉氣；唔預知未來，唔知邊度有寶；小瓶來歷未明，要自己摸索，唔會自動變強。",
+       extra:"三叔引薦入七玄門摸骨測出靈根；隨身帶著一隻撿來的神秘小瓶。"},
+      {name:"陸雲風",dao:"",origin:"越國建州修仙小家族旁支子弟",root:"shuang",
+       sect:"黃楓谷雜役弟子",goal:"在黃楓谷站穩腳跟，爭取早日入煉氣",stones:30,style:"steady",
+       idType:"original",anchor:"",relation:"",era:"黃楓谷時期 · 太嶽山脈",
+       limit:"家族供奉有限；入不了煉氣就要返去接管鋪子，唔可以無限拖。",
+       extra:"家族每月有少量供奉，但族中長輩明言：入不了煉氣，就回來接管鋪子。"},
+      {name:"沈青禾",dao:"",origin:"天南散修之後，自幼跟著父親在坊市討生活",root:"san",
+       sect:"無門無派（散修）",goal:"在太南山一帶攢夠靈石，拜入七大派",stones:12,style:"lucky",
+       idType:"original",anchor:"",relation:"",era:"太南山坊市 · 天南越國",
+       limit:"無宗門庇護；消息多但真假要自己分，買錯嘢無人賠。",
+       extra:"在太南山坊市一間符籙鋪做學徒，消息靈通，認得不少來往散修。"},
+      {name:"陳小嶺",dao:"",origin:"越國陳家子弟，陳師兄同族細佬，自幼喺家族祠堂旁長大",root:"ice",
+       sect:"黃楓谷記名弟子",goal:"唔靠兄長名頭，自己喺黃楓谷站穩",stones:10,style:"steady",
+       idType:"canon_relation",anchor:"陳師兄（陳巧倩一族／黃楓谷陳家）",relation:"同族細佬，自小受兄長聲望籠罩",era:"黃楓谷時期 · 太嶽山脈",
+       limit:"未入煉氣；兄長名頭只帶嚟方便打聽同額外注視，唔帶嚟法寶同修為；做錯事會傳返陳家，聲望壓力會變成審視同比較。",
+       extra:"旁人提起你，第一句總係「陳師兄個細佬」——好處係門房肯畀面，壞處係你每一步都有人睇住、有人比較。"},
+      {name:"玄骨",dao:"",origin:"年輕時尚未成名，出身來歷只餘零碎說法（平行分支）",root:"dark",
+       sect:"無門無派（散修）",goal:"喺未走上舊路之前，重新揀自己條路",stones:6,style:"bold",
+       idType:"canon_branch",anchor:"玄骨",relation:"本人（年輕版／平行分支）",era:"原著時代之前 · 平行分支 · 天南邊緣",
+       limit:"未入煉氣；無後來修為、法寶同完整記憶，只有零碎直覺同偏冷心性，當唔得全知；時代地點唔夾之處一律以年輕版／平行分支處理，唔硬套後來事件。",
+       extra:"你有時會閃過唔屬於而家年紀嘅念頭，但真假難分，講出口只會招來猜疑——呢份「特質」係負擔，多過係本事。"},
+      {name:"韓小立",dao:"",origin:"越國鏡州青牛鎮，韓家鄰舍子弟，同韓立自小一齊玩大",root:"wei",
+       sect:"尚未入門（待升仙大會）",goal:"跟住自己步伐入門，唔做任何人影子",stones:3,style:"lucky",
+       idType:"canon_relation",anchor:"韓立",relation:"同鄉兼兒時玩伴（關係者）",era:"七玄門／升仙大會前 · 越國鏡州",
+       limit:"未入煉氣；同韓立熟唔代表知道佢所有秘密，亦唔會分到佢嘅機緣；你嘅選擇可以同佢分道，甚至行去完全唔同嘅宗門。",
+       extra:"你同嗰個沉默寡言嘅同鄉一齊長大——人哋嘅路係人哋嘅，你要行自己嗰條。"}
+    ];
+
+    /* ============ 道友池 ============ */
+    var MATE_POOL = [
+      {name:"厲飛雨",dao:"飛雨",realm:"凡人",trait:"七玄門出身，刀法凌厲，講義氣",rel:0},
+      {name:"陳巧倩",dao:"巧倩",realm:"煉氣",trait:"黃楓谷弟子，心思細密，出手大方",rel:0},
+      {name:"劉靖",dao:"靖之",realm:"煉氣",trait:"黃楓谷弟子，嫉惡如仇，正直敢言",rel:0},
+      {name:"董萱兒",dao:"萱兒",realm:"煉氣",trait:"掩月宗弟子，性子跳脫，消息靈通",rel:0},
+      {name:"宋蒙",dao:"蒙山",realm:"煉氣",trait:"散修出身，沉默寡言，煉體有成",rel:0},
+      {name:"鍾衛娘",dao:"衛娘",realm:"煉氣",trait:"黃楓谷弟子，溫厚可靠，擅長照料靈草",rel:0}
+    ];
+    var REL_STAGES = ["初識","相熟","知己","生死之交"];
+
+    /* ============ 狀態 ============ */
+    var S = null;
+    function normalizeIdentity(p){
+      /* 開局正規化（本地硬規則）：原著人物唔會因為填表漏洞攞到高境界/法寶/全知 */
+      var hay = (p.name||"")+" "+(p.anchor||"");
+      if (/玄骨/.test(hay) && p.idType==="original"){ p.idType = "canon_branch"; if(!p.anchor) p.anchor="玄骨"; if(!p.era) p.era="原著時代之前 · 平行分支 · 天南邊緣"; }
+      else if (/韓立|南宮婉|陳巧倩|厲飛雨/.test(hay) && p.idType==="original" && (p.name||"")===hay.trim()){ p.idType="canon_young"; }
+      if ((p.idType==="canon_young"||p.idType==="canon_branch") && !p.limit) p.limit = "未入煉氣；無後來修為、法寶同完整記憶；唔預知未來。";
+      if (p.idType!=="original" && !p.anchor) p.anchor = p.name||"";
+      p.stones = Math.max(0, Math.min(60, parseInt(p.stones,10)||0)); /* 關係/名氣唔換無限靈石 */
+      return p;
+    }
+    function newState(p){
+      p = normalizeIdentity(p);
+      var startCult = p.style==="steady" ? 1 : (p.style==="bold" ? 1 : 0);
+      return {
+        name:p.name||"無名", dao:p.dao||"", origin:p.origin||"", root:p.root,
+        sect:p.sect||"", goal:p.goal||"", style:p.style, extra:p.extra||"",
+        idType:p.idType||"original", anchor:p.anchor||"", relation:p.relation||"", era:p.era||"", limit:p.limit||"",
+        deviation:0, enemies:[],
+        realm:0, cult:startCult, stones:Math.max(0,parseInt(p.stones,10)||0),
+        pills:1, mats:2, debt:0, secret:0, prep:0,
+        body:0, day:1, turn:1, scene:(p.era && p.era.indexOf("太嶽")>=0) ? "越國·太嶽山脈外" : "越國·太嶽山脈外",
+        mates:[], explored:false, closedPending:0, log:[], lastPicks:{}
+      };
+    }
+    function threshold(){ return S.realm<4 ? THRESH[ROOT_GROUP[S.root]][S.realm] : null; }
+    function realmName(){ return REALMS[S.realm]; }
+    function weekday(){ return WEEK[(S.day-1)%7]; }
+    function clampBody(){ S.body=Math.max(0,Math.min(4,S.body)); }
+    function deviationLabel(){ if(S.deviation<=0) return "貼近原著引力"; if(S.deviation<=2) return "微微偏離"; if(S.deviation<=5) return "已成支線"; return "完全另闢一途"; }
+    function statusText(){
+      var extra = " / 丹藥 "+S.pills+" / 材料 "+S.mats + (S.debt>0?" / 欠賬 "+S.debt:"") + (S.secret>0?" / 露財風險 "+S.secret:"") + " / 偏離 "+S.deviation+"（"+deviationLabel()+"）";
+      return "❖ P."+S.turn+" | "+S.scene+" / "+phaseInfo().name+" / "+realmName()+" / 靈石 "+S.stones+extra+" / "+BODY[S.body];
+    }
+    function canonPressurePara(){
+      if (!S.anchor) return "";
+      if (S.idType==="canon_relation") return "你同 "+S.anchor+" 嗰層關係（"+(S.relation||"關係者")+"），喺呢度唔係護身符，係一盞燈：有人肯畀面，亦有人專登睇你有幾多斤兩。提起嗰個名，你要諗清楚邊啲說話講得、邊啲唔講得。";
+      if (S.idType==="canon_branch") return "「"+S.anchor+"」呢個名，而家仲未有後來嗰種分量。你只有年輕版嘅心性同零碎特質，冇修為、冇法寶、冇得預知——呢條係平行分支，行錯行啱，都由你而家嘅選擇算數。";
+      if (S.idType==="canon_young") return "你係年輕版嘅 "+S.anchor+"，唔係後來嗰位。冇人會因為呢個名就讓路，你亦唔知道前面邊一步係坑——原著引力只會將人和事推到你附近，點揀，仍然係你嘅事。";
+      return "";
+    }
+    function bumpDeviation(n, why){ S.deviation = Math.max(0, S.deviation + (n||0)); return why ? ("原著偏離 +"+n+"："+why+"（而家："+deviationLabel()+"）") : ""; }
+
+    /* ============ 工具 ============ */
+    function rnd(n){ return Math.floor(Math.random()*n); }
+    function pick(key, arr){
+      var i = rnd(arr.length);
+      if (S && arr.length>1){
+        if (S.lastPicks[key]===i) i=(i+1)%arr.length;
+        S.lastPicks[key]=i;
+      }
+      return arr[i];
+    }
+    function wrap30(text){ /* 傳訊代碼框：每行上限 30 字 */
+      var out=[];
+      String(text).split("\n").forEach(function(line){
+        while(line.length>30){ out.push(line.slice(0,30)); line=line.slice(30); }
+        out.push(line);
+      });
+      return out.join("\n");
+    }
+    function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+    /* ============ 渲染 ============ */
+    var $ = function(id){ return document.getElementById(id); };
+    function renderHeader(){
+      $("idName").textContent = S.name + (S.dao ? "（道號："+S.dao+"）" : "");
+      $("idMeta").textContent = S.origin+" · "+S.sect+(S.goal?" · 志向："+S.goal:"")+(S.era?" · "+S.era:"")+(S.anchor?" · 錨點："+S.anchor+(S.relation?"（"+S.relation+"）":""):"")+(S.limit?" · 限制："+S.limit:"");
+      var chips = [
+        "<span class='chip'>第 <b>"+S.day+"</b> 日 · "+weekday()+"</span>",
+        "<span class='chip'>階段 <b>"+phaseInfo().name+"</b></span>",
+        "<span class='chip'>境界 <b>"+realmName()+"</b></span>",
+        "<span class='chip'>靈根 <b>"+ROOT_LABEL[S.root]+"</b></span>",
+        "<span class='chip'>靈石 <b>"+S.stones+"</b></span>",
+        "<span class='chip'>丹藥 <b>"+S.pills+"</b> 粒</span>",
+        "<span class='chip'>材料 <b>"+S.mats+"</b> 份</span>",
+        "<span class='chip'>狀態 <b>"+BODY[S.body]+"</b></span>",
+        "<span class='chip'>路線 <b>"+STYLE_LABEL[S.style]+"</b></span>"
+      ];
+      chips.push("<span class='chip'>身份 <b>"+(IDTYPE_LABEL[S.idType]||"原創凡人")+"</b></span>");
+      if (S.anchor) chips.push("<span class='chip'>原著錨點 <b>"+esc(S.anchor)+"</b></span>");
+      chips.push("<span class='chip'>原著偏離 <b>"+S.deviation+"</b> · "+deviationLabel()+"</span>");
+      if (S.debt>0) chips.push("<span class='chip'>欠賬 <b>"+S.debt+"</b> 靈石</span>");
+      if (S.secret>0) chips.push("<span class='chip'>露財風險 <b>"+S.secret+"</b>/3</span>");
+      if (S.prep>0) chips.push("<span class='chip'>突破準備 <b>"+S.prep+"</b></span>");
+      $("idChips").innerHTML = chips.join("");
+      var th = threshold();
+      if (th===null){ $("progFill").style.width="100%"; $("progLabel").textContent="已至化神，修為圓滿。"; }
+      else{
+        $("progFill").style.width = Math.min(100, Math.round(S.cult/th*100))+"%";
+        $("progLabel").textContent = "修為 "+S.cult+" / "+th+"（"+realmName()+"→"+REALMS[S.realm+1]+" 門檻）";
+      }
+      $("passiveLabel").textContent = PASSIVE[S.root] || "";
+      $("lifeLabel").textContent = "壽元上限約 "+LIFE_CAP[S.realm]+" 年（"+realmName()+"）· 日子唔等人，閉關同趕路都會耗時間。";
+      var ph = phaseInfo();
+      $("phaseBox").innerHTML = "<b>"+esc(ph.name)+"</b> · "+esc(ph.region)+"<br/>"+esc(ph.desc)+"<br/><span style='color:var(--ink-soft)'>"+esc(ph.unlock)+"</span>";
+      $("statusLine").textContent = statusText();
+      renderMates();
+    }
+    function renderMates(){
+      $("mateCount").textContent = S.mates.length;
+      if(!S.mates.length){
+        $("mates").innerHTML = "<p class='empty-note'>尚未結識道友。第一次出外歷練之後，或會遇上有緣人。</p>";
+        return;
+      }
+      $("mates").innerHTML = S.mates.map(function(m){
+        return "<div class='mate'><b>"+esc(m.name)+"</b> <span class='small'>道號 "+esc(m.dao)+"</span><br/>"+
+          "<span class='small'>境界："+esc(m.realm)+" · "+esc(m.trait)+"</span><br/>"+
+          "<span class='rel'>關係："+REL_STAGES[Math.min(3,m.rel)]+"</span></div>";
+      }).join("");
+    }
+    function renderTurn(entry){
+      var div = document.createElement("div");
+      div.className="turn";
+      var html="";
+      if(entry.you) html += "<p class='you'>▸ 你："+esc(entry.you)+"</p>";
+      html += "<div class='story'>";
+      entry.paras.forEach(function(p){ html += "<p>"+esc(p)+"</p>"; });
+      if(entry.code) html += "<pre>"+esc(wrap30(entry.code))+"</pre>";
+      html += "</div><div class='stat'>"+esc(entry.stat)+"</div>";
+      div.innerHTML = html;
+      $("log").appendChild(div);
+      div.scrollIntoView({behavior:"smooth", block:"start"});
+    }
+    function renderOptions(opts){
+      var box = $("options"); box.innerHTML="";
+      var letters=["A","B","C","D"];
+      opts.forEach(function(o,i){
+        var b=document.createElement("button");
+        b.type="button"; b.className="opt";
+        b.innerHTML="<b>"+letters[i]+"</b>"+esc(o.label);
+        b.addEventListener("click", function(){ doAction(o.action); });
+        box.appendChild(b);
+      });
+    }
+    var QUICK = [
+      ["修煉打坐","修煉"],["服丹","服丹"],["嘗試突破","突破"],["宗門任務","任務"],["去坊市","坊市"],
+      ["出外歷練","歷練"],["閉關","閉關"],["切磋比試","切磋"],["煉丹煉器","煉丹"],
+      ["秘境副本","秘境"],["斂氣藏拙","斂氣"],["結交道友","道友"],["休息瞓覺","瞓覺"]
+    ];
+    function renderQuick(){
+      var bar=$("quickBar"); bar.innerHTML="";
+      QUICK.forEach(function(q){
+        var b=document.createElement("button");
+        b.type="button"; b.textContent=q[0];
+        b.addEventListener("click", function(){ doAction(q[1]); });
+        bar.appendChild(b);
+      });
+    }
+
+    /* ============ 回合結算 ============ */
+    function commit(youText, result){
+      S.scene = result.scene || S.scene;
+      clampBody();
+      var entry = { you: youText||"", paras: result.paras, code: result.code||null, stat: statusText() };
+      S.log.push(entry);
+      renderHeader();
+      renderTurn(entry);
+      renderOptions(result.options);
+      S.turn += 1;
+      $("statusLine").textContent = statusText();
+    }
+    function stdOptions(a,b,c,d){ return [a,b,c,d]; }
+    function opt(label, action){ return {label:label, action:action}; }
+
+    /* ============ 場景引擎（關鍵詞觸發，隨機變化） ============ */
+    function gainCult(n){
+      var th = threshold(); if(th===null) return 0;
+      var before = S.cult;
+      S.cult = Math.min(th, S.cult + n); /* 單次最多推到門檻，唔跳級 */
+      return S.cult - before;
+    }
+    function sessionCap(){ /* 單次修煉／閉關增益上限：當前門檻一半（向下取整） */
+      var th = threshold(); if(th===null) return 0;
+      return Math.max(1, Math.floor(th/2));
+    }
+    function sceneCultivate(){
+      var g = S.style==="bold" ? 2 : 1;
+      if (Math.random()<0.3) g += 1;
+      var got = gainCult(Math.min(g, sessionCap()));
+      var place = pick("cv-place", ["黃楓谷傳功閣外的青石坪","太嶽山脈一處僻靜山洞","坊市客棧的靜室","宗門分派的雜役小院"]);
+      var feel = pick("cv-feel", [
+        "你盤膝坐下，將那套最基礎的吐納法訣一遍遍運轉。靈氣稀薄得幾乎感覺不到，只能靠水磨工夫，一絲一絲從經脈裡榨出來。半日過去，丹田裡那點熱意才凝實了些許——修仙這條路，從來都是這樣磨出來的。",
+        "晨光未起你已經坐在蒲團上。呼吸放緩，心神沉入丹田，看著那縷微弱的靈氣沿經脈緩緩遊走，一個周天，又一個周天。旁人看著枯燥，你卻知道：韓立那樣的人物，也是這樣一日一日熬出來的。",
+        "今日的修煉格外沉滯，靈氣入體如泥牛入海。你沒有急躁，只是把法訣放得更慢、更穩。臨收功時，經脈深處忽然輕輕一顫，像乾涸的河床滲進了第一滴水。慢，是慢了些，但這一步踏得實。"]);
+      var tail = got>0 ? "這一坐，修為精進了 "+got+" 點。" : "修為已抵今境界門檻，再練也只是鞏固——是時候考慮突破了。";
+      if (S.body<2 && Math.random()<0.35) S.body += 1;
+      return { scene: place, paras:[feel, tail],
+        options: stdOptions(opt("繼續打坐修煉","修煉"), opt("試試衝擊瓶頸","突破"), opt("去坊市走走","坊市"), opt("休息瞓覺，養足精神","瞓覺")) };
+    }
+    function sceneBreakthrough(){
+      var th = threshold();
+      if (th===null) return { paras:["你已站在化神之境，此界再無更高的門檻攔你。接下來的路，是飛升的傳說了。"],
+        options: stdOptions(opt("繼續修煉鞏固","修煉"), opt("出外歷練","歷練"), opt("去坊市","坊市"), opt("休息瞓覺","瞓覺")) };
+      if (S.cult < th){
+        return { paras:["你盤膝坐下，試著衝擊"+realmName()+"通往"+REALMS[S.realm+1]+"的瓶頸。靈力才運轉到一半，經脈便脹痛難當，那層無形的壁障紋絲不動——修為還差 "+(th-S.cult)+" 點火候。強衝只會傷了根基，你緩緩收功，心裡明白：這一步，急不得。"],
+          options: stdOptions(opt("回去老實修煉","修煉"), opt("閉關苦修一段日子","閉關"), opt("做宗門任務換丹藥","任務"), opt("休息瞓覺","瞓覺")) };
+      }
+      var chance = {tian:0.75, shuang:0.65, san:0.55, wei:0.45, variant:0.65}[ROOT_GROUP[S.root]];
+      if (S.style==="steady") chance += 0.08;
+      if (S.style==="bold") chance -= 0.05;
+      if (S.body>=3) chance -= 0.18; else if (S.body===2) chance -= 0.08;
+      chance += Math.min(0.18, (S.prep||0)*0.06);
+      var pillUsed = false;
+      if (S.pills>0){ S.pills -= 1; pillUsed = true; chance += 0.10; }
+      var prepNote = "今次準備：突破準備 "+(S.prep||0)+"、"+(pillUsed?"服下一粒丹藥護住經脈（丹藥 -1）":"手邊無丹藥可用")+"、身體「"+BODY[S.body]+"」。"+(S.realm>=1 && S.prep===0 ? "你冇做閉關準備就硬衝，壁障前先輸半成——下次先閉關／服丹／養傷，唔好淨靠膽。" : "準備唔保證成功，只係令失敗嗰陣唔至於傷到根基。");
+      S.prep = 0;
+      if (Math.random() < chance){
+        var from = realmName();
+        S.realm += 1; S.cult = 0; S.body = Math.min(4, S.body+1);
+        var devNote = S.anchor ? bumpDeviation(1, "你親身跨過呢道關，命運已經唔再完全跟住原著嗰條線行") : "";
+        return { paras:[
+          prepNote,
+          "靈力在丹田裡越積越滿，你咬緊牙關，將全部修為狠狠撞向那層壁障。唔係一撞就開——你頂住反震，一寸一寸磨，磨到耳邊嗡嗡作響，壁障先裂開一線，靈氣如開閘之水湧遍全身，經脈一條條被拓寬、重塑。",
+          "你成功突破了！由 "+from+" 踏入 "+realmName()+" 之境。呢一步唔係天降，係丹藥、日子同傷一齊計出嚟嘅。"+(devNote?devNote+"。":"")+"接下嚟嘅門檻，只會更高，資源亦只會更貴。"],
+          options: stdOptions(opt("打坐鞏固新境界","修煉"), opt("去坊市採買補給","坊市"), opt("出外歷練試試身手","歷練"), opt("休息瞓覺，好好睡一覺","瞓覺")) };
+      }
+      var loss = Math.max(1, Math.floor(th/4));
+      S.cult = Math.max(0, S.cult - loss);
+      S.body = Math.min(4, S.body + (S.root==="ice" ? 1 : 2));
+      var iceNote = S.root==="ice" ? "千鈞一髮之際，冰靈根的寒氣自動護住心脈——冰心護體之下，傷勢比預想的輕了一截。" : "";
+      return { paras:[
+        prepNote,
+        "衝擊瓶頸的最後關頭，靈力忽然逆行亂竄。你只覺胸口如遭重錘，一口鮮血噴在蒲團上，那層壁障卻只裂開一絲，隨即重新合攏。突破失敗了。"+iceNote,
+        "修為倒退了 "+loss+" 點，身體也受了傷，今次用咗嘅丹藥同準備一概唔退。好在根基未損，命還在——先養傷、再儲資源，唔好連衝。"],
+        options: stdOptions(opt("休息瞓覺，療養傷勢","瞓覺"), opt("去坊市買療傷丹藥","坊市"), opt("靜坐調息（修煉）","修煉"), opt("找道友傾訴討教","道友")) };
+    }
+    function sceneMission(){
+      var pay = 4 + rnd(7) + S.realm*3;
+      var job = pick("ms-job", [
+        "看守藥園三日，替執事弟子澆灌一片黃龍草。活計枯燥，但勝在安穩，執事驗收時還算滿意。",
+        "替宗門跑一趟腿，護送一箱符紙去太嶽山脈另一頭的據點。路上無驚無險，就是腳程磨人。",
+        "清理煉丹房積年的藥渣，又去庫房幫手盤點靈草。管事見你手腳勤快，多給了兩塊靈石。",
+        "在坊市替宗門的鋪子看店半日，迎來送往。散修們討價還價的本事，你算是見識了。"]);
+      S.stones += pay;
+      var repayNote = "";
+      if (S.debt>0){ var repay = Math.min(S.debt, Math.floor(pay/2)); S.debt -= repay; S.stones -= repay; repayNote = "管事知你有欠賬，先扣 "+repay+" 塊靈石還賬（餘欠 "+S.debt+"）——欠賬唔清，成日有人提起。"; }
+      var matNote = ""; if (Math.random()<0.35){ S.mats += 1; matNote = "順手留低 1 份可用材料。"; }
+      if (Math.random()<0.4) S.body = Math.min(4, S.body+1);
+      return { scene: phaseIndex()===2 ? "亂星海·差遣碼頭" : (phaseIndex()>=3 ? "大晉·宗門差遣處" : "黃楓谷·任務堂"), paras:[job, "這一趟任務，你賺到了 "+pay+" 塊靈石。"+matNote+repayNote, canonPressurePara()].filter(Boolean),
+        code: pick("ms-code", ["黃楓谷任務堂告示\n本月藥園看守尚缺人手\n煉氣以下弟子可接\n報酬按日結算，勿誤", "傳功閣傳訊\n新入門弟子聽令\n每月任務不得少於兩次\n逾期者扣減供奉"]),
+        options: stdOptions(opt("再接一件任務","任務"), opt("回去修煉","修煉"), opt("去坊市花掉部分靈石","坊市"), opt("休息瞓覺","瞓覺")) };
+    }
+    function sceneMarket(){
+      var sceneName = phaseIndex()===2 ? pick("mk-name", ["亂星海·天星城外坊市","亂星海·魁星島坊市"]) : (phaseIndex()>=3 ? pick("mk-name", ["大晉·京畿坊市","天南·越國坊市"]) : pick("mk-name", ["太南山坊市","越國坊市","太嶽山脈坊市"]));
+      var intro = pick("mk-intro", [
+        "坊市裡人聲鼎沸，攤檔沿街排開：丹藥、符籙、法器、靈草，還有真假難辨的「古修遺寶」。叫賣聲、討價還價聲混成一片，你握緊儲物袋，在人群裡慢慢逛。",
+        "今日正逢太南小會前夕，坊市比平日熱鬧三分。有宗門弟子成群結隊，也有獨行散修壓低斗笠。你這樣的凡人子弟走在其中毫不起眼——不起眼，有時反而是好事。"]);
+      var choices = [];
+      var paras = [intro];
+      if (S.stones >= 8){
+        paras.push("聚氣丹八塊靈石一瓶（三粒），能助修煉；金剛符五塊一張，關鍵時刻保命。你而家有靈石 "+S.stones+"、丹藥 "+S.pills+" 粒、材料 "+S.mats+" 份——買一瓶，之後做兩次任務先返到原位，呢啲數要自己計清楚。（點「買一瓶聚氣丹」購買，丹藥入庫，唔會即刻食晒）");
+      } else {
+        paras.push("你逛了一圈，看中的東西樣樣都貴。以你現在 "+S.stones+" 塊靈石，只能買些符紙硃砂之類的小物，或者——先去賺錢。有人肯賒一瓶丹畀你，條件係下次任務先還 10 塊：賒唔賒，唔好喺攤前衝動決定。");
+      }
+      paras.push("攤主們的眼都很毒：你多看哪件法器兩眼，他們就知道你心動了。你停留得耐，旁邊已經有人記低你買過咩——露財風險，係咁累積返嚟。");
+      return { scene: sceneName, paras: paras,
+        options: stdOptions(opt("買一瓶聚氣丹（8 靈石）","買丹藥"), opt("賣掉些雜物換靈石","賣物"), opt("打聽拍賣會消息","拍賣"), opt("離開坊市去歷練","歷練")) };
+    }
+    function sceneBuy(){
+      if (S.stones < 8) return { paras:["你摸了摸儲物袋——靈石不足八塊，連一瓶最普通的聚氣丹都買不起。攤主瞥了你一眼，淡淡道：「先去做任務吧，年輕人。」"],
+        options: stdOptions(opt("去做宗門任務","任務"), opt("繼續逛坊市","坊市"), opt("回去修煉","修煉"), opt("出外歷練碰碰運氣","歷練")) };
+      S.stones -= 8; S.pills += 3;
+      if (S.secret<3 && Math.random()<0.4) S.secret += 1;
+      return { paras:["你同攤主來回講價：八塊，一塊都冇少，佢只肯送一張舊符紙。你咬牙買下一瓶聚氣丹——三粒，入庫慢慢用，唔即刻食。靈石由 "+(S.stones+8)+" 跌到 "+S.stones+"，呢筆數之後做任務要追返。"+(S.secret>=2?"你買丹嗰陣畀兩名散修望住，之後最好斂氣低調啲。":"")],
+        options: stdOptions(opt("返去服一粒丹再修煉","服丹"), opt("再逛逛坊市","坊市"), opt("去做任務補回靈石","任務"), opt("休息瞓覺","瞓覺")) };
+    }
+    function sceneUsePill(){
+      if (S.pills<=0) return { paras:["你摸入儲物袋，先發現丹藥已經食晒。冇丹，就只能靠水磨吐納——或者去坊市買、去煉丹房自己煉。丹藥從來唔係無限供應。"], options: stdOptions(opt("去坊市買丹藥","坊市"), opt("自己煉丹（要材料）","煉丹"), opt("老實修煉","修煉"), opt("做任務賺靈石","任務")) };
+      S.pills -= 1;
+      var got = gainCult(Math.min(1, sessionCap()));
+      if (S.body>0 && Math.random()<0.4) S.body -= 1;
+      return { paras:["你拈起一粒聚氣丹，溫水送服，坐低運功。藥力唔係一入肚就變修為——你要用三個周天慢慢化開，化唔切嗰部分會散走，急都急唔嚟。"+(got>0?"修為精進了 "+got+" 點。":"修為已到門檻，藥力只用嚟鞏固同養經脈。")+"丹藥餘 "+S.pills+" 粒，要留返突破嗰陣護脈，唔好一次食晒。"], options: stdOptions(opt("趁藥力未散繼續修煉","修煉"), opt("閉關做突破準備","閉關"), opt("試試衝擊瓶頸","突破"), opt("休息瞓覺","瞓覺")) };
+    }
+    function sceneConceal(){
+      var before = S.secret; S.secret = Math.max(0, S.secret-1); S.prep = Math.min(3, S.prep+1);
+      return { paras:["你冇去威，亦冇去解釋。你將新買嘅嘢分開收好，換返舊衣，照常去藥園淋水、去任務堂排隊，講說話留三分。過咗半日，留意你嘅目光果然散咗啲。斂氣藏拙唔會令你變強，但會令麻煩遲啲搵上門——露財風險 "+before+" → "+S.secret+"，同時你將心神收返嚟，突破準備 +1。"], options: stdOptions(opt("低調修煉","修煉"), opt("去做普通任務","任務"), opt("同道友飲茶探口風","道友"), opt("休息瞓覺","瞓覺")) };
+    }
+    function sceneSell(){
+      if (S.mats<=0) return { paras:["你想賣雜物，先發現材料已經用晒／賣晒。掌櫃攤手：「冇貨，我都冇辦法畀價你。」要入貨，就要去歷練採集，或者做任務嗰陣留心邊角料。"], options: stdOptions(opt("出外歷練採材料","歷練"), opt("去做宗門任務","任務"), opt("繼續逛坊市","坊市"), opt("回去修煉","修煉")) };
+      S.mats -= 1; var pay = 2 + rnd(5); S.stones += pay;
+      return { paras:["你賣出 1 份材料（餘 "+S.mats+" 份）。掌櫃先壓到兩塊，話年份唔足；你指出其中一味係煉聚氣丹要用嘅，拉鋸半盞茶，最後成交 "+pay+" 塊靈石。賣材料換到即時靈石，但之後煉丹就要再去採——呢啲取捨，次次都要計。"],
+        options: stdOptions(opt("繼續逛坊市","坊市"), opt("去做宗門任務","任務"), opt("回去修煉","修煉"), opt("出外歷練補材料","歷練")) };
+    }
+    function maybeMeetMate(){
+      if (S.mates.length >= 5) return null;
+      var candidates = MATE_POOL.filter(function(m){
+        return !S.mates.some(function(x){ return x.name===m.name; });
+      });
+      if (!candidates.length) return null;
+      var m = candidates[rnd(candidates.length)];
+      var nm = {name:m.name, dao:m.dao, realm:m.realm, trait:m.trait, rel:0};
+      S.mates.push(nm);
+      return nm;
+    }
+    function sceneExplore(){
+      var first = !S.explored; S.explored = true;
+      var roll = Math.random();
+      if (S.style==="lucky") roll += 0.08;
+      var paras = [], code = null, newMate = null;
+      if (roll < 0.30){
+        var got = gainCult(1); var pay = 3+rnd(6); S.stones += pay; S.mats += 2; S.secret = Math.min(3, S.secret+1);
+        paras.push(pick("ex-good", [
+          "你在太嶽山脈一處溪谷邊，發現了一小片無人看管的靈草——年份雖淺，卻是正經的煉丹材料。你連根採下，分好包起，又在溪邊石縫裡摸到幾塊散碎靈石。問題係：溪邊有新鮮腳印，有人見過你彎腰採藥。",
+          "山道轉彎處，一株老樹下竟生著兩朵靈芝。採藥的老散修只講咗句「撞緣都要識收尾」，就急急腳走咗。你採咗靈芝，但亦知道，呢份收穫多咗一個目擊者。"]));
+        paras.push("收穫：靈石 +"+pay+"，材料 +2"+(got>0?"，修為 +"+got:"")+"；代價：露財風險 +1（有人見到）。返去可以揀「斂氣藏拙」壓低風險。");
+      } else if (roll < 0.62){
+        var pay2 = 2+rnd(5); S.stones += pay2; S.mats += 1;
+        paras.push(pick("ex-mid", [
+          "這一趟歷練平平無奇：趕了兩日山路，獵到一頭低階妖獸，皮毛要趁新鮮賣，獸骨留低做材料。沒有奇遇，也沒有兇險——修仙者的日子，大多數時候就係等、行、計數。",
+          "你在山裡轉了大半日，只採到些普通藥材。回程遇上山雨，躲在岩洞避了半個時辰，倒把近日修煉的心得想通了一節——時間就係咁耗咗，冇得追返。"]));
+        paras.push("收穫：靈石 +"+pay2+"，材料 +1。");
+        if (Math.random()<0.4) S.body = Math.min(4,S.body+1);
+      } else if (roll < 0.85){
+        var hurt = (S.root==="dark" && Math.random()<0.5);
+        S.body = Math.min(4, S.body + (S.root==="ice"?1:2));
+        paras.push(pick("ex-bad", [
+          "密林深處，一頭妖獸毫無徵兆地撲出來！你倉促應戰，法器未及祭出便被掀翻在地，肩頭火辣辣地疼。拼著挨了兩下，你總算滾進石縫脫了身，坐在地上喘了很久才敢動。",
+          "你誤入了一處殘破禁制，靈光亂竄，衣袖被燒穿了幾個洞。等你連滾帶爬退出來，才發現後背全是冷汗——秘境機緣人人想要，命卻只有一條。"]));
+        paras.push(hurt ? "絕境之中，你的暗靈根微微一熱，腳步竟比平日快了三分，硬是從獸口下搶回一條命。" : "你受了傷。回程的路，格外漫長。");
+      } else {
+        var got2 = gainCult(1);
+        code = "石壁殘字\n此地靈氣雖薄\n勝在清淨無擾\n後來者若見此字\n可坐三日，勿貪";
+        paras.push("你在山腹深處找到一間古修留下的石室，石壁上刻著幾行殘字。石室裡靈氣比外間濃郁少許，你盤坐修煉，心神前所未有地安定。"+(got2>0?"修為精進了 1 點。":"")+"臨走時，你朝石壁鄭重行了一禮。");
+      }
+      if (first || (Math.random()<0.3 && S.mates.length<5)){
+        newMate = maybeMeetMate();
+        if (newMate){
+          paras.push("回程路上，你結識了 "+newMate.name+"（道號「"+newMate.dao+"」，"+newMate.realm+"期，"+newMate.trait+"）。兩人一路同行回坊市，相談甚歡，互留了傳訊符——修仙路上，多一位道友，就多一條路。你們的關係：初識。");
+        }
+      }
+      return { scene:"太嶽山脈·歷練", paras: paras, code: code,
+        options: stdOptions(opt("繼續在外歷練","歷練"), opt("回坊市休整買賣","坊市"), opt("回去修煉消化收穫","修煉"), opt("休息瞓覺","瞓覺")) };
+    }
+    function sceneSeclusion(){
+      var got = gainCult(Math.min(S.style==="bold"?3:2, sessionCap()));
+      S.body = Math.min(4, S.body+1); S.closedPending += 2; S.prep = Math.min(3, S.prep+1);
+      return { scene:"閉關石室", paras:[
+        "你封了石室的門，掛上「閉關勿擾」的木牌，先將丹藥、清水同退路一一擺好，先至坐低。頭幾日心浮氣躁，滿腦子都是坊市的人聲和未完的任務；熬到後來，心才一點點沉下去，只剩呼吸和靈氣運轉的聲音。閉關唔係瞓喺度等突破，係將經脈狀態養到可以衝關嗰一刻。",
+        "出關時你眼神比閉關前清明，突破準備 +1（而家 "+S.prep+"/3）。"+(got>0?"這一關，修為精進了 "+got+" 點——慢工出細活，急不來。":"修為已抵門檻，閉關只鞏固了根基同準備。")+"連日閉關耗神不少，欠下嘅日子會喺瞓覺嗰陣一併過去——壽元同機會，都唔會等你。"],
+        options: stdOptions(opt("繼續閉關","閉關"), opt("出關去坊市走走","坊市"), opt("休息瞓覺，補回精神","瞓覺"), opt("試試衝擊瓶頸","突破")) };
+    }
+    function sceneSleep(){
+      var adv = 1 + S.closedPending; S.closedPending = 0;
+      S.day += adv; S.body = Math.max(0, S.body - 2);
+      if (S.body>0 && adv>1) S.body = 0;
+      return { paras:[
+        "你回到住處，倒頭便睡。這一覺睡得極沉，夢裡都是經脈運轉的微光。醒來時天光微亮，窗外有鳥鳴，身體的疲憊與傷勢都緩和了不少。",
+        "日子翻篇了——如今是第 "+S.day+" 日 · "+weekday()+"。（閉關欠下的時日，也一併在這一覺裡過去了。）新的一天，新的修煉。"],
+        options: stdOptions(opt("晨起修煉","修煉"), opt("去做宗門任務","任務"), opt("出外歷練","歷練"), opt("去坊市","坊市")) };
+    }
+    function sceneMates(){
+      if (!S.mates.length){
+        return { paras:["你暫時還沒有道友。修仙路漫漫，獨行固然自在，但消息、幫手、切磋的對象，都要靠結交。出外歷練一趟吧——緣分多半在路上。"],
+          options: stdOptions(opt("出外歷練","歷練"), opt("去坊市碰碰運氣","坊市"), opt("回去修煉","修煉"), opt("休息瞓覺","瞓覺")) };
+      }
+      var m = S.mates[rnd(S.mates.length)];
+      m.rel = Math.min(3, m.rel + (Math.random()<0.5?1:0));
+      var act = pick("mt-act", [
+        "你約了 "+m.name+" 在坊市茶攤見面。兩壺粗茶下肚，天南地北地聊：哪個秘境又要開了、誰家的築基丹是真是假、太南小會今年的行情。臨走時，"+m.name+" 拍拍你的肩：「有事傳訊，別自己硬撐。」",
+        m.name+" 來訪，帶來一包自家種的靈茶。你們對坐談起修煉心得，他（她）在瓶頸上的幾句經驗之談，讓你少走了不少彎路。這種不談利益的往來，在修仙界格外難得。",
+        "你和 "+m.name+" 一起接了件宗門任務，配合得意外地默契。回程分靈石時誰也不肯多拿，推讓了半天，最後相視一笑平分了事。"]);
+      return { paras:[act, "你與 "+m.name+" 的關係，如今是「"+REL_STAGES[m.rel]+"」。"],
+        options: stdOptions(opt("約道友切磋一場","切磋"), opt("同道友一起歷練","歷練"), opt("各自修煉去","修煉"), opt("休息瞓覺","瞓覺")) };
+    }
+    function sceneAuction(){
+      var item = pick("au-item", ["一瓶築基輔助的聚靈丹","一件成色不錯的青蛟旗（仿）","一張據說是古修洞府的地圖殘片","三粒年份足的黃龍丹"]);
+      var price = 15 + rnd(20);
+      var afford = S.stones >= price;
+      return { scene:"坊市拍賣會", paras:[
+        "拍賣會在坊市最大的酒樓二層舉行，來的多是煉氣後期以上的修士，壓軸拍品是"+item+"，起拍價一路攀升，最後定格在 "+price+" 塊靈石。",
+        afford ? "你的靈石倒是夠拍下一件入門拍品，但拍賣場上最忌衝動——多看、多聽，摸清行情，也是修煉。（輸入「拍下」可以嘗試競拍入門拍品）" : "你坐在角落裡，看著靈石像水一樣流動，心裡默默記下每件拍品的成交價。現在的你只能看，但看清楚了，將來才不會被人當水魚。"],
+        options: stdOptions(opt("嘗試拍下入門拍品","拍下"), opt("只看不買，摸清行情","坊市"), opt("離開拍賣會去歷練","歷練"), opt("回去修煉","修煉")) };
+    }
+    function sceneBid(){
+      var price = 12 + rnd(10);
+      if (S.stones < price) return { paras:["你剛舉手，旁邊的人便加價壓了過去。幾輪下來價格已超出你的儲物袋——你只好放下手，權當交了學費：拍賣場，沒靈石連坐直一點都難。"],
+        options: stdOptions(opt("去做任務賺靈石","任務"), opt("回坊市逛逛","坊市"), opt("回去修煉","修煉"), opt("休息瞓覺","瞓覺")) };
+      S.stones -= price; S.pills += 2; S.secret = Math.min(3, S.secret+1);
+      return { paras:["你咬牙跟了三輪價，以 "+price+" 塊靈石拍下兩粒入門丹藥（入庫，丹藥餘 "+S.pills+"）。全場目光喺你身上一掃而過——拍賣場贏咗件貨，同時亦畀人記住咗塊面。露財風險 +1，返去最好低調一段日子。"],
+        options: stdOptions(opt("回去修煉","修煉"), opt("去做任務補回靈石","任務"), opt("繼續逛拍賣會","拍賣"), opt("休息瞓覺","瞓覺")) };
+    }
+    function sceneDungeon(name){
+      if (name==="血色禁地"){
+        if (S.realm<1) return { paras:["血色禁地是越國七派共同把守的試煉之地，只許煉氣期弟子入內，爭奪煉製築基丹的靈藥。你如今還是凡人，連禁地外圍的禁制都靠近不得。守門的執事看你一眼：「先入了煉氣，再來報名吧。」"],
+          options: stdOptions(opt("回去修煉，先入煉氣","修煉"), opt("去做宗門任務","任務"), opt("出外歷練","歷練"), opt("休息瞓覺","瞓覺")) };
+        var got = gainCult(1); var pay = 5+rnd(8); S.stones += pay; S.mats += 2; S.secret = Math.min(3, S.secret+1); bumpDeviation(1,"你親身入過血色禁地，經歷已經同原著旁觀者唔同");
+        if (Math.random()<0.45) S.body = Math.min(4,S.body+1);
+        return { scene:"血色禁地", paras:["禁地開啟那日，七派弟子魚貫而入。裡面靈藥遍地，殺機也遍地——你謹記一個原則：不貪，計好退路先採。採夠自己那份便走，絕不為傳說中的寶物多留一刻。饒是如此，退出來時衣衫也破了幾處，同行嗰陣識嘅人亦見到你袋裡有貨。"+(got>0?"生死之間，修為精進了 1 點。":""), "收穫：靈藥材料 +2、換得靈石 "+pay+"；代價：露財風險 +1。築基丹唔會直接跌落你手——採到嘅靈藥要交宗門煉製、按貢獻分，呢一步先最磨人。"],
+          options: stdOptions(opt("回坊市出售收穫","坊市"), opt("回去修煉","修煉"), opt("休息瞓覺，壓壓驚","瞓覺"), opt("找道友聊聊禁地見聞","道友")) };
+      }
+      if (name==="虛天殿"){
+        if (S.realm<3) return { paras:["虛天殿是亂星海傳說中的上古遺蹟，相傳每三百年現世一次，入內者非結丹修士不可——築基修士連殿門的禁制都撐不過。你如今境界尚淺，這些只當是茶攤上聽來的故事——記在心裡，留待來日。"],
+          options: stdOptions(opt("回去修煉","修煉"), opt("出外歷練","歷練"), opt("去坊市打聽消息","坊市"), opt("休息瞓覺","瞓覺")) };
+        var pay2 = 10+rnd(15); S.stones += pay2;
+        return { scene:"虛天殿", paras:["虛天殿現世的異象驚動了整個天南。你跟隨宗門前輩的隊伍踏入殿中，殘寶、古鼎、層層禁制——每一步都走得如履薄冰。最終你帶出的東西不多，卻件件都是坊市難尋的珍品，換了 "+pay2+" 塊靈石。見過那樣的天地，你的眼界再回不去了。"],
+          options: stdOptions(opt("回坊市","坊市"), opt("回去修煉消化見聞","修煉"), opt("休息瞓覺","瞓覺"), opt("同道友分享見聞","道友")) };
+      }
+      /* 墜魔谷 */
+      if (S.realm<4) return { paras:["墜魔谷在天南邊陲，谷中魔氣縱橫，是元嬰修士才敢踏足的絕地——結丹修士入谷，也多半有去無回。你站在谷外百里，都能感覺到那股令人心悸的氣息。有些地方，境界不到，看一眼都是奢侈。"],
+        options: stdOptions(opt("回去修煉","修煉"), opt("出外歷練","歷練"), opt("去坊市","坊市"), opt("休息瞓覺","瞓覺")) };
+      var pay3 = 20+rnd(20); S.stones += pay3;
+      return { scene:"墜魔谷", paras:["你隨隊深入墜魔谷，谷中古魔遺骸與靈眼之樹的傳說一一應驗。這一趟九死一生，帶出來的收穫換了 "+pay3+" 塊靈石，但隊伍裡少了兩個人——修仙路走到這一步，每一步都是拿命換的。"],
+        options: stdOptions(opt("回坊市休整","坊市"), opt("回去修煉","修煉"), opt("休息瞓覺","瞓覺"), opt("同道友喝一杯壓驚","道友")) };
+    }
+    function sceneSpar(){
+      var partner = S.mates.length ? S.mates[rnd(S.mates.length)].name : "一位同門師兄";
+      var windNote = (S.root==="wind" && S.realm<=1) ? "你的風靈根在低境界時格外佔便宜，身法一展，對方連你的衣角都摸不到。" : "";
+      var thunderNote = (S.root==="thunder" && S.realm>=2) ? "你的雷靈根隨修為漸深而威勢漸盛，出手間隱隱有雷光相隨，對方不敢硬接。" : "";
+      var win = Math.random() < 0.55;
+      var got = gainCult(1);
+      return { scene:"演武場", paras:[
+        "演武場上，你與 "+partner+" 拉開架勢，點到為止地切磋了一場。法器交擊聲不斷，圍觀的弟子漸漸圍成一圈。"+windNote+thunderNote,
+        win ? "最後一招，你險勝半式。對方收起法器，喘著氣拱手：「好身手。」切磋不傷和氣，又能照見自己的短處——"+(got>0?"這一場打完，修為精進了 1 點。":"這一場打完，你對現有手段又熟了幾分。") : "這一場你輸了半招，輸在經驗。對方沒有留手，也沒有嘲笑，只是點出你出招時的一個破綻。輸得明白，比贏得糊塗值錢——"+(got>0?"修為精進了 1 點。":"你把這破綻記在了心裡。")],
+        options: stdOptions(opt("再切磋一場","切磋"), opt("回去修煉補短板","修煉"), opt("同對手去茶攤復盤","道友"), opt("休息瞓覺","瞓覺")) };
+    }
+    function sceneCraft(){
+      var isDan = Math.random()<0.5;
+      if (S.mats < 2 || S.stones < 2){
+        return { paras:["煉丹煉器第一課：材料有限。你而家有材料 "+S.mats+" 份、靈石 "+S.stones+" 塊；開一爐要材料 2 份＋租爐 2 塊靈石，唔夠就開唔成。你只好喺丹房外睇師兄開爐，將投藥次序同火候變化逐項記低——睇，唔使錢，但唔會即刻變成手藝。"],
+          options: stdOptions(opt("去做任務賺靈石","任務"), opt("出外歷練採藥","歷練"), opt("回去修煉","修煉"), opt("休息瞓覺","瞓覺")) };
+      }
+      S.mats -= 2; S.stones -= 2;
+      var ok = Math.random() < 0.55;
+      if (isDan){
+        if (ok) S.pills += 2;
+        return { paras:[ ok ?
+          "你租咗一間小丹房（材料 -2、靈石 -2），照丹方起爐：先文火煨藥，再逐味投料，最後凝丹嗰陣手心出汗都唔敢擦。開爐，藥香撲鼻——兩粒成丹入庫（丹藥餘 "+S.pills+"）。品相普通，但係你自己一爐一爐燒出嚟嘅。" :
+          "丹爐裡傳出一聲悶響，跟著便是一股焦糊味（材料 -2、靈石 -2，一概唔退）。你望住爐底嗰團黑渣，將失敗嗰一步喺腦裡重走三次：火，喺第三味藥嗰陣猛咗。煉丹呢條路，係拿有限材料燒出嚟嘅，冇得無限重試。"],
+          options: stdOptions(opt("再煉一爐","煉丹"), opt("去坊市買成丹算了","坊市"), opt("回去修煉","修煉"), opt("休息瞓覺","瞓覺")) };
+      }
+      return { paras:[ ok ?
+        "煉器房裡爐火通紅。你把一塊精鐵反覆鍛打、淬火、刻紋，最後成了一件粗糙但堪用的小法器。拿在手裡沉甸甸的——自己煉的東西，用起來格外順手。" :
+        "刻紋的最後一筆，手一抖，整件器胚的靈光頓時散了。你盯著廢胚看了很久，把失敗的那一筆在腦裡重走了一遍又一遍。手藝這東西，沒有捷徑，只有爐數。"],
+        options: stdOptions(opt("再煉一件","煉丹"), opt("去坊市看看成品法器","坊市"), opt("回去修煉","修煉"), opt("休息瞓覺","瞓覺")) };
+    }
+    function sceneRest(){
+      S.body = Math.max(0, S.body-1);
+      return { paras:["你在住處靜坐調息了半日，又去山泉邊洗了把臉。沒有修煉，沒有任務，只是讓身體和心神都鬆一鬆。修仙是長跑——會休息的人，才跑得遠。（休息不會過日子；要翻日，請揀「瞓覺」。）"],
+        options: stdOptions(opt("精神好些了，去修煉","修煉"), opt("出外歷練","歷練"), opt("去坊市","坊市"), opt("索性瞓覺過一日","瞓覺")) };
+    }
+
+    /* ============ 關鍵詞路由 ============ */
+    function routeAction(raw){
+      var t = String(raw||"");
+      if (/血色禁地/.test(t)) return sceneDungeon("血色禁地");
+      if (/虛天殿/.test(t)) return sceneDungeon("虛天殿");
+      if (/墜魔谷/.test(t)) return sceneDungeon("墜魔谷");
+      if (/秘境|副本|禁地/.test(t)) return sceneDungeon(S.realm<3 ? "血色禁地" : (S.realm<4 ? "虛天殿" : (Math.random()<0.5?"虛天殿":"墜魔谷")));
+      if (/服丹|服下.*丹|食.*聚氣丹/.test(t)) return sceneUsePill();
+      if (/斂氣|藏拙|隱藏修為|低調/.test(t)) return sceneConceal();
+      if (/離開黃楓谷|離開宗門|改投|拒絕.*差遣|唔跟.*原定|分道揚鑣/.test(t)){ bumpDeviation(1,"你主動揀咗同原定路線唔同嘅行法"); }
+      if (/突破|衝擊|瓶頸/.test(t)) return sceneBreakthrough();
+      if (/閉關/.test(t)) return sceneSeclusion();
+      if (/瞓|睡|休息.*日|過日/.test(t) && !/調息/.test(t)) return sceneSleep();
+      if (/買丹藥|買聚氣丹|拍下/.test(t)) return /拍下/.test(t) ? sceneBid() : sceneBuy();
+      if (/賣物|賣掉|出售/.test(t)) return sceneSell();
+      if (/拍賣/.test(t)) return sceneAuction();
+      if (/煉丹|煉器|煉製/.test(t)) return sceneCraft();
+      if (/切磋|比試|比武/.test(t)) return sceneSpar();
+      if (/道友|結交|朋友|茶攤/.test(t)) return sceneMates();
+      if (/任務|差事|打工/.test(t)) return sceneMission();
+      if (/坊市|買|賣|鋪|店/.test(t)) return sceneMarket();
+      if (/歷練|探索|出外|山脈|採藥/.test(t)) return sceneExplore();
+      if (/休息|調息|靜養/.test(t)) return sceneRest();
+      if (/修煉|打坐|吐納|練功/.test(t)) return sceneCultivate();
+      return sceneCultivate();
+    }
+
+    /* ============ AI 模式（DeepSeek 雙模式） ============ */
+    function aiConfig(){
+      return { key: $("apiKey").value.trim(), model: $("apiModel").value };
+    }
+    /* 蒸餾規則（頁面內置，唔依賴外部 skill 檔）：只傳壓縮規則＋當前狀態摘要，唔塞成份 skill */
+    var DISTILLED_RULES = "【人間篇蒸餾規則】境界凡人→煉氣→築基→結丹→元嬰→化神；壽元約80/120/200/500/1000/2000年，時間會耗壽元同機會。七派：黃楓谷、掩月宗、清虛門、巨劍門、化刀塢、天闕堡、靈獸山。地域隨境界：煉氣前後天南越國太嶽/太南山/血色禁地準備；築基越國動盪；結丹亂星海（星宮/逆星盟、島嶼海獸）；元嬰天南回歸/墜魔谷/大晉/空間節點壓力。試煉門檻硬性：血色禁地煉氣、虛天殿結丹、墜魔谷元嬰，未達只可聽聞/外圍。資源稀缺：靈石、丹藥、材料有限，買賣要講價計數；每樣收穫要有代價（目擊、露財、欠賬、欠人情、受傷、耗日子）。單次行動修為增益最多當前門檻一半，唔跳級；突破要門檻+準備+風險，失敗傷身耗資源唔即死（除非玩家自選死路）。文筆克制：寫具體勞動、等候、趕路、講價、療傷、小計算；勝利要窄同賺返嚟，退走/斂氣/交易/忍耐係正當解法；唔好即刻精通、免費寶物、公開羞辱式爽點。NPC按利益、恐懼、感激、貪念、宗門忠誠、家族壓力同有限資訊行事，唔會無條件幫人。身份規則：原著人物一律年輕/未入煉氣版，冇高境界、冇法寶、冇全知未來記憶；關係者只得關係、聲望壓力、宗門位置、起始地點、隱藏特質同原著引力，唔會分到錨點人物嘅機緣。玩家選擇可以偏離原著，偏離只增唔好強行拉返韓立主線；時代/地點唔夾（如玄骨）用年輕版/平行分支合理化。硬規則由本地 code 執行同 clamp，你只負責敘事同提出合理狀態，唔好試圖繞過門檻/上限/數量。";
+    var STYLE_RULES = "【凡人流文筆校準】繁體中文，第二人稱「你」，貼近人物當下感官同手邊嘅事。正文要展開（每回合約 2–4 段、每段 3–6 句），但唔堆形容詞：少用「驚天、絕世、無比、恐怖如斯」呢類空泛大詞，多寫睇得見嘅細節——手點做、要等幾耐、花幾多、傷喺邊、邊個企喺旁邊睇住。修煉係重複勞動：運轉、停頓、失敗、再嚟；收穫要即刻計代價（靈石少咗、丹藥用咗、畀人見到、欠咗人情、耗咗日子）。NPC 只准用說話、動作、停頓同取捨嚟呈現，唔好直接講穿佢哋隱藏心聲，唔好寫「佢心諗／暗想其實要害你」；佢哋按利益、恐懼、面子、宗門規矩同有限資訊行事，幫你要有理由，拒絕你亦要有理由。禁止爽文套路：唔好即時打臉、眾人跪服、全場震驚、秒殺、一步登天、免費奇遇、白送法寶、主角光環令人自動讓路。禁止現代網絡 slang：唔好用 666、yyds、絕絕子、臥槽、打卡、好 chill、流量、內卷 等現代詞；對話要合古修世界身份。勝利要窄：贏半招、採夠就走、講價爭到一塊靈石，都算贏；退走、斂氣、忍耐、交易，往往先係凡人流嘅解法。";
+    var STYLE_ANCHORS = "【文筆錨點一·藥園勞動（原創範例，學語氣同格式，唔好抄字句）】\n你天未光就去藥園，先逐壟睇土色，再決定邊壟淋靈雨。靈雨術唔難，難在均勻：手抬高一寸，水就散；壓低一寸，又只濕到葉面。你淋到第三壟，丹田已經發空，只好停低，坐喺田邊等靈氣慢慢返嚟。管事驗收嗰陣冇讚你，只用指尖捻起一片葉，點頭話「呢壟算合格」，跟住喺冊上記低你今個月第二次冇出錯。冇人喝彩，但呢一筆，比喝彩有用——下次分差事，佢會先諗起記得住名字嘅人。\n❖ P.12 | 第 4 日・黃楓谷藥園\n❖ 境界：煉氣（修為 3/9）\n❖ 靈石：7；❖ 丹藥：1；❖ 材料：2；❖ 身體狀態：略感疲憊；❖ 原著偏離：0\nA、繼續淋埋餘下兩壟，慢啲都做完\nB、去任務堂問下個月差事點分\nC、返住處打坐，補返丹田靈氣\nD、瞓覺，聽日再嚟驗收\n"+
+    "【文筆錨點二·坊市講價（原創範例）】\n攤主開價十塊，你冇即刻還價，先拈起嗰瓶聚氣丹睇封口。封蠟有裂，係擺耐咗嘅貨，藥力最多餘七成。你將呢點講出嚟，佢面色唔變，只將瓶推返近少少：「八塊，唔買就放低。」你計過：八塊買七成藥力，仲平過正價買新貨，但你袋只得十一塊，買完就冇錢租丹房。你最後用七塊半——即係七塊加一份材料——成交，攤主收材料嗰陣掂咗掂分量，先肯點頭。冇人輸冇人贏到盡，雙方都只係爭到自己嗰一線。\n❖ P.18 | 第 6 日・太南山坊市\n❖ 境界：煉氣（修為 4/9）\n❖ 靈石：3；❖ 丹藥：4；❖ 材料：1；❖ 身體狀態：精神飽滿；❖ 原著偏離：1\nA、即刻返客棧服一粒丹試藥力\nB、將丹收好，先去做任務補靈石\nC、喺坊市多行一圈，記低邊檔封蠟有裂\nD、斂氣離開，唔好畀人記住你買過丹\n"+
+    "【文筆錨點三·知難而退（原創範例）】\n石縫入面嗰點微光，你企喺三丈外睇咗好耐。入去唔難，難係出嚟嗰陣點算：左邊係塌方，右邊水聲越來越近，你手邊只得一張舊符，傷口仲未結痂。你最後冇入去，只用炭喺石壁低處做咗個唔起眼嘅記號，退返去山道。行到半路，身後傳嚟一聲悶響，塵土隔咗一陣先湧出嚟。你冇慶幸自己好彩，只將記號嘅位置、時辰同水聲方向逐樣記低——退，唔係放棄，係將今次冇本錢攞嘅嘢，留返畀下次有本錢嘅自己。\n❖ P.23 | 第 9 日・太嶽山脈溪谷\n❖ 境界：煉氣（修為 5/9）\n❖ 靈石：9；❖ 丹藥：1；❖ 材料：3；❖ 身體狀態：身受輕傷；❖ 原著偏離：2\nA、返藥園療傷，記低石縫位置\nB、去坊市買多兩張符，先補保命嘢\nC、搵相熟道友商量，唔好自己再探\nD、瞓覺養傷，聽日再決定";
+    /* ============ 文筆修復第二遍 ============
+       第一稿經本地漂移檢查唔合格時，先唔好即刻棄用：將草稿送返 DeepSeek，
+       只准改文筆、節奏同呈現方式，唔准改事實、結果、數字同選項意思；
+       修復稿要再過一次同一套檢查，先至採用，否則照舊跌返本地引擎。 */
+    var REPAIR_RULES = "【文筆修復第二遍・硬性限制】你而家唔係續寫，係修復一篇草稿嘅文筆。只准改：用詞、句式、節奏、段落呼吸、細節呈現、同NPC心聲嘅改寫方式（改成睇得見嘅說話、動作、停頓、取捨）。絕對唔准改：事件結果、邊個在場、人名地點、物品同數量、靈石／丹藥／材料／修為／境界／日數／原著偏離等一切數字、狀態欄數值、A–D選項嘅意思同順序、玩家行動造成嘅後果。唔准加新事件、新人物、新寶物、新轉折；唔准刪走草稿入面已經發生嘅事；唔准將失敗改成成功、將受傷改成無傷、將買唔起改成買到。修復目標：跟返凡人流校準——克制、具體勞動同小計算、收穫即刻計代價、勝利要窄、唔好即時打臉／全場震驚／秒殺／一步登天、唔好現代slang、唔好直接講穿NPC隱藏心聲。輸出格式同草稿一樣：正文2–4段、完整❖狀態欄（數值照草稿，唔好自己改數）、A、B、C、D四個選項（意思同順序照草稿）。只輸出修復後嘅成篇回覆，唔好解釋你改咗咩，唔好加任何前言後記。";
+    function sceneAnchorHint(text){
+      var t = String(text||"")+" "+(S?S.scene:"");
+      if (/藥園|任務|差事|傳功|雜役|閉關|修煉|打坐/.test(t)) return "今次場景近「錨點一・藥園勞動」：寫手邊工序、等候、驗收同記名呢類小事，唔好寫成熱血宣言。";
+      if (/坊市|買|賣|拍賣|講價|鋪|店|靈石/.test(t)) return "今次場景近「錨點二・坊市講價」：寫睇貨、還價、計數同雙方各爭一線，唔好寫成一擲千金或者全場矚目。";
+      if (/歷練|秘境|禁地|退|逃|山脈|探索|副本/.test(t)) return "今次場景近「錨點三・知難而退」：寫觀察、衡量退路同留記號，退走同忍耐係正當解法，唔好寫成無謀勇闖或者輕易奪寶。";
+      if (/突破|瓶頸|衝擊/.test(t)) return "今次係突破場景：寫準備、反震、一寸一寸磨同失敗代價，唔好寫成水到渠成或者天象異變式登天。";
+      return "今次場景跟返最貼近嘅錨點語氣：克制、具體、計代價，唔好滑去爽文節奏。";
+    }
+    function stateSummary(){
+      var th = threshold(); var ph = phaseInfo();
+      var mates = S.mates.length ? S.mates.map(function(m){return m.name+"("+REL_STAGES[Math.min(3,m.rel)]+")";}).join("、") : "無";
+      return "【當前狀態摘要】身份:"+S.name+"|類型:"+(IDTYPE_LABEL[S.idType]||"原創")+"|錨點:"+(S.anchor||"無")+"|關係:"+(S.relation||"無")+"|時代地點:"+(S.era||ph.region)+"|初始限制:"+(S.limit||"無")+"|出身:"+S.origin+"|靈根:"+ROOT_LABEL[S.root]+"|宗門位置:"+S.sect+"|階段:"+ph.name+"("+ph.region+")|境界:"+realmName()+"|修為:"+S.cult+"/"+(th===null?"—":th)+"|靈石:"+S.stones+"|丹藥:"+S.pills+"|材料:"+S.mats+"|傷勢:"+BODY[S.body]+"|突破準備:"+S.prep+"|秘密/露財風險:"+S.secret+"/3|債務:"+S.debt+"|敵人:"+(S.enemies&&S.enemies.length?S.enemies.join("、"):"無")+"|道友:"+mates+"|原著偏離:"+S.deviation+"("+deviationLabel()+")|第"+S.day+"日 "+weekday()+"|場景:"+S.scene+"|目標:"+(S.goal||"—")+"|路線:"+STYLE_LABEL[S.style]+(S.extra?"|補充:"+S.extra:"");
+    }
+    function systemPrompt(){
+      return "你是一個《凡人修仙傳》人間篇風格的文字修仙冒險主持人，內容完全乾淨，只寫修煉、宗門、坊市、秘境、道友情誼，絕不含成人或色情內容。全程繁體中文、第二人稱「你」，描寫展開豐富，唔好只改寫玩家一句話。文筆以 STYLE_RULES 同錨點為準：DeepSeek 嘅語感同原著唔會完全一樣係正常，但節奏、克制同計代價嘅方法要跟錨點，唔好用爽文語氣填空。\n"+DISTILLED_RULES+"\n"+STYLE_RULES+"\n"+STYLE_ANCHORS+"\n"+stateSummary()+"\n"+
+      "傳訊、書信、公告要用 markdown 代碼框包裹，每行不超過 30 字。\n"+
+      "每回合結尾必須附狀態欄，逐行寫：❖ P."+S.turn+" | 第 N 日・當前場景；❖ 境界：境界名（修為 X/門檻）；❖ 靈石：N；❖ 丹藥：N；❖ 材料：N；❖ 身體狀態：狀態；❖ 原著偏離：N。數字必須係敘事之後嘅最新進度，而且唔可以違反上面硬規則（本地 parser 會 clamp 不合法變化）。然後給出 A、B、C、D 四個互動選項，停下等待玩家，不要代替玩家行動。";
+    }
+    function chatEndpoint(){
+      var c = aiConfig();
+      return c.key ? "https://api.deepseek.com/chat/completions" : "/api/chat";
+    }
+    function balanceEndpoint(){
+      var c = aiConfig();
+      return c.key ? "https://api.deepseek.com/user/balance" : "/api/balance";
+    }
+    function authHeaders(){
+      var c = aiConfig(); var h = {"Content-Type":"application/json"};
+      if (c.key) h["Authorization"] = "Bearer "+c.key;
+      return h;
+    }
+    function aiHistory(){
+      var msgs = [{role:"system", content: systemPrompt()}];
+      S.log.slice(-6).forEach(function(e){
+        if (e.you) msgs.push({role:"user", content:e.you});
+        msgs.push({role:"assistant", content: e.paras.join("\n")});
+      });
+      return msgs;
+    }
+    function clampInt(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+    function applyAiState(statText){
+      /* 本地硬 clamp：AI 只提出狀態，合法範圍由 code 決定（門檻/單次上限/過日/數量/偏離） */
+      if (!statText) return;
+      var before = S._aiBefore || {realm:S.realm, cult:S.cult, stones:S.stones, pills:S.pills, mats:S.mats, day:S.day, deviation:S.deviation, secret:S.secret, debt:S.debt, prep:S.prep};
+      var cap = (function(){ var t = before.realm<4 ? THRESH[ROOT_GROUP[S.root]][before.realm] : 10; return Math.max(1, Math.floor(t/2)); })();
+      var m;
+      m = statText.match(/第\s*(\d+)\s*日/);
+      if (m) S.day = clampInt(parseInt(m[1],10), before.day, before.day+7); /* 只有敘事明確過日先加，最多 +7；本地瞓覺先係正式過日 */
+      m = statText.match(/境界\s*[：:]?\s*(化神|元嬰|結丹|築基|煉氣|凡人)/) || statText.match(/(化神|元嬰|結丹|築基|煉氣|凡人)/);
+      var newRealm = before.realm;
+      if (m){ var idx = REALMS.indexOf(m[1]); if (idx>=0) newRealm = clampInt(idx, before.realm, before.realm+1); } /* 唔准跳級、唔准倒退 */
+      var realmJumped = newRealm > before.realm;
+      S.realm = newRealm;
+      m = statText.match(/修為\s*[：:]?\s*(\d+)\s*(?:\/|／)\s*(\d+)/);
+      if (m){ var wantCult = parseInt(m[1],10); S.cult = realmJumped ? clampInt(wantCult, 0, cap) : clampInt(wantCult, Math.max(0, before.cult-cap), before.cult+cap); }
+      else if (realmJumped) S.cult = 0;
+      var th = threshold();
+      S.cult = th===null ? Math.max(0,S.cult) : clampInt(S.cult, 0, th);
+      m = statText.match(/靈石\s*[：:]?\s*(\d+)/);
+      if (m) S.stones = clampInt(parseInt(m[1],10), 0, before.stones+60);
+      m = statText.match(/丹藥\s*[：:]?\s*(\d+)/);
+      if (m) S.pills = clampInt(parseInt(m[1],10), 0, before.pills+5);
+      m = statText.match(/材料\s*[：:]?\s*(\d+)/);
+      if (m) S.mats = clampInt(parseInt(m[1],10), 0, before.mats+5);
+      m = statText.match(/原著偏離\s*[：:]?\s*(\d+)/);
+      if (m) S.deviation = clampInt(parseInt(m[1],10), before.deviation, before.deviation+2);
+      m = statText.match(/露財風險\s*[：:]?\s*(\d+)/);
+      if (m) S.secret = clampInt(parseInt(m[1],10), 0, 3);
+      m = statText.match(/(?:債務|欠賬)\s*[：:]?\s*(\d+)/);
+      if (m) S.debt = clampInt(parseInt(m[1],10), 0, before.debt+20);
+      var bodyKeys = [["走火入魔",4],["重傷",3],["身受輕傷",2],["輕傷",2],["輕微疲憊",1],["略感疲憊",1],["疲憊",1],["精神飽滿",0],["健康",0]];
+      for (var i=0;i<bodyKeys.length;i++){
+        if (statText.indexOf(bodyKeys[i][0])>=0){ S.body = bodyKeys[i][1]; break; }
+      }
+      clampBody();
+      m = statText.match(/P\.\s*\d+\s*\|\s*([^\n\/／]+)/);
+      if (m){
+        var sc = m[1].replace(/第\s*\d+\s*日\s*[・·、]?\s*/,"").trim();
+        if (sc) S.scene = sc;
+      }
+    }
+    var SHUANGWEN_RE = /(打臉|啪啪作響|全場震驚|眾人震驚|跪服|跪下求饒|秒殺|碾壓全場|一步登天|無敵於|天降神器|白送.*法寶|免費送|簽到獎勵|系統獎勵|主角光環|所有人.*倒吸|倒吸一口涼氣.*震驚|恐怖如斯)/;
+    var SLANG_RE = /(666|yyds|絕絕子|臥槽|牛逼|打卡|好\s*chill|流量|內卷|emo|好頂|勁爆爽|爽爆)/i;
+    var MINDREAD_RE = /(心諗[:：]|心想[:：]|暗想[:：]|內心深處其實|佢心裡其實想|他心中暗道[:：])/;
+    var FASTPACE_RE = /(轉眼間?.{0,8}(三年|數年|十年|數月)|一夜之間就突破|連升[兩三二0-9]級|直接突破到|瞬間突破|立刻精通|當場學會|轉眼.{0,6}圓滿)/;
+    function aiDriftCheck(text, statLines, optCount){
+      var reasons = [];
+      if (statLines.length < 3) reasons.push("狀態欄不足");
+      var joined = statLines.join("\n");
+      if (!/境界/.test(joined) || !/靈石/.test(joined)) reasons.push("狀態欄缺境界/靈石");
+      if (optCount < 4) reasons.push("選項不足四個");
+      if (SHUANGWEN_RE.test(text)) reasons.push("爽文套路");
+      if (SLANG_RE.test(text)) reasons.push("現代slang");
+      if (MINDREAD_RE.test(text)) reasons.push("講穿NPC心聲");
+      if (FASTPACE_RE.test(text)) reasons.push("節奏太快");
+      /* 嚴重不合法狀態：唔只 clamp，直接跌返本地引擎 */
+      var before = S._aiBefore;
+      if (before){
+        var m;
+        m = joined.match(/(化神|元嬰|結丹|築基|煉氣|凡人)/);
+        if (m){ var idx = REALMS.indexOf(m[1]); if (idx > before.realm+1 || idx < before.realm) reasons.push("境界跳級/倒退"); }
+        m = joined.match(/第\s*(\d+)\s*日/);
+        if (m && parseInt(m[1],10) > before.day+30) reasons.push("日數暴增");
+        m = joined.match(/靈石\s*[：:]?\s*(\d+)/);
+        if (m && parseInt(m[1],10) > before.stones+500) reasons.push("靈石暴增");
+      }
+      return reasons;
+    }
+    function parseAiReply(text){
+      var statLines = [], keptLines = [];
+      String(text).split("\n").forEach(function(line){
+        if (/^\s*❖/.test(line)) statLines.push(line.trim());
+        else keptLines.push(line);
+      });
+      var body = keptLines.join("\n").trim();
+      var optRe = /\n\s*([ABCD])[、.．:：]\s*([^\n]+)/g, opts = [], m, cleaned = body;
+      var found = [];
+      while ((m = optRe.exec(body)) !== null) found.push({letter:m[1], label:m[2], idx:m.index});
+      var drift = aiDriftCheck(String(text), statLines, found.length);
+      if (drift.length){
+        /* 爽文/格式漂移/嚴重不合法：唔照單全收。拋錯時帶埋原因清單，
+           doAction 會先試文筆修復第二遍；修復稿再唔合格，先跌返本地引擎
+           （輕微數值偏差唔會嚟到呢度，一早喺 applyAiState clamp 咗） */
+        var derr = new Error("AI漂移:"+drift.join("、"));
+        derr.driftReasons = drift.slice();
+        throw derr;
+      }
+      applyAiState(statLines.join("\n"));
+      var stat = statLines.join(" ");
+      cleaned = body.slice(0, found[0].idx).trim();
+      found.slice(0,4).forEach(function(f){ opts.push(opt(f.letter+"、"+f.label, f.label)); });
+      var code = null;
+      var codeMatch = cleaned.match(/```[^\n]*\n([\s\S]*?)```/);
+      if (codeMatch){ code = codeMatch[1].trim(); cleaned = cleaned.replace(codeMatch[0], "").trim(); }
+      var paras = cleaned.split(/\n{2,}|\n/).map(function(s){return s.trim();}).filter(Boolean);
+      if (!paras.length) paras = ["（AI 未有回覆內容，請再試一次。）"];
+      return { paras: paras, code: code, options: opts, aiStat: stat };
+    }
+    function fetchChatCompletion(msgs, temperature){
+      return fetch(chatEndpoint(), {
+        method:"POST", headers: authHeaders(),
+        body: JSON.stringify({model: aiConfig().model, messages: msgs, stream:false, temperature:temperature, top_p:0.85})
+      }).then(function(r){
+        if (!r.ok) throw new Error("HTTP "+r.status);
+        return r.json();
+      }).then(function(j){
+        var content = j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
+        if (!content) throw new Error("回覆格式異常");
+        return content;
+      });
+    }
+    function repairEnabled(){
+      var t = $("repairToggle");
+      return !t || t.checked;
+    }
+    function buildRepairMessages(draft, reasons, playerText){
+      var msgs = [{role:"system", content: systemPrompt()+"\n"+REPAIR_RULES}];
+      msgs.push({role:"user", content: "玩家今回合行動："+playerText});
+      msgs.push({role:"assistant", content: draft});
+      msgs.push({role:"user", content: "上面嗰篇係第一稿，本地檢查驗出以下文筆／格式問題："+reasons.join("、")+"。請按【文筆修復第二遍・硬性限制】修復成篇：只改文筆、節奏同呈現，唔改事實、結果、數字、狀態欄數值同選項意思／順序。"+sceneAnchorHint(playerText)+"修復稿會再過一次同一套檢查，唔合格就會成篇棄用，所以爽文詞、現代slang、講穿心聲、跳級式節奏要清乾淨，同時狀態欄同四個選項要齊全。"});
+      return msgs;
+    }
+    function doAiAction(text){
+      S._aiBefore = {realm:S.realm, cult:S.cult, stones:S.stones, pills:S.pills, mats:S.mats, day:S.day, deviation:S.deviation, secret:S.secret, debt:S.debt, prep:S.prep};
+      var msgs = aiHistory();
+      msgs.push({role:"user", content: text});
+      return fetchChatCompletion(msgs, 0.35).then(function(content){
+        try {
+          var ok = parseAiReply(content);
+          ok.repaired = false;
+          return ok;
+        } catch (err) {
+          /* 第一稿漂移：未開修復、或者唔係漂移類錯誤（例如格式爛到冇草稿可修），照舊拋出跌返本地引擎 */
+          var reasons = (err && err.driftReasons) ? err.driftReasons : null;
+          if (!repairEnabled() || !reasons || !reasons.length) throw err;
+          /* 嚴重不合法（境界跳級/日數或靈石暴增）唔修：嗰啲唔係文筆問題，係事實已經歪咗，修字眼救唔返 */
+          var severe = reasons.some(function(x){ return /跳級|暴增/.test(x); });
+          if (severe) throw err;
+          /* 文筆修復第二遍：多一次 API 呼叫，溫度再低啲，只要穩定唔要新意 */
+          return fetchChatCompletion(buildRepairMessages(content, reasons, text), 0.2).then(function(fixed){
+            var res = parseAiReply(fixed); /* 修復稿再過同一套漂移檢查＋同一套 clamp，唔合格會喺呢度拋錯 */
+            res.repaired = true;
+            res.repairReasons = reasons.slice();
+            return res;
+          }).catch(function(){
+            throw err; /* 修復失敗／修復稿再漂移：拋返第一稿嘅錯，doAction 照舊跌返本地引擎 */
+          });
+        }
+      });
+    }
+    /* 測試連接：兩階段 */
+    $("testBtn").addEventListener("click", function(){
+      var log = $("testLog"); log.style.display="block"; log.textContent="";
+      var c = aiConfig();
+      function line(s){ log.textContent += s+"\n"; }
+      line("模式："+(c.key ? "直連 api.deepseek.com（自備 Key）" : "伺服器代傳 /api/*（未貼 Key）"));
+      line("階段一：查詢餘額 "+balanceEndpoint()+" …");
+      fetch(balanceEndpoint(), {method:"GET", headers: authHeaders()})
+        .then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+        .then(function(j){
+          var bal = "";
+          try {
+            if (j && j.balance_infos && j.balance_infos[0]) bal = j.balance_infos[0].total_balance+" "+(j.balance_infos[0].currency||"");
+            else if (j && typeof j.balance !== "undefined") bal = String(j.balance);
+          } catch(e){}
+          line("階段一 ✓ 餘額查詢成功"+(bal ? "："+bal : ""));
+          $("balanceHint").textContent = bal ? "餘額："+bal : "";
+          line("階段二：發送測試對話 "+chatEndpoint()+" …");
+          return fetch(chatEndpoint(), {method:"POST", headers: authHeaders(),
+            body: JSON.stringify({model:c.model, messages:[{role:"user",content:"請只回覆兩個字：收到"}], stream:false, temperature:0})});
+        })
+        .then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+        .then(function(j){
+          var t = j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
+          line("階段二 ✓ 對話成功，AI 回覆："+(t||"(空)"));
+          line("結論：連接正常，可以開啟「AI 敘事模式」。");
+        })
+        .catch(function(err){
+          line("✗ 失敗："+err.message+"。若用代傳模式，請確認 Cloudflare Pages Functions（/api/chat、/api/balance）已部署；若直連，請檢查 Key。");
+        });
+    });
+
+    /* ============ 行動入口 ============ */
+    var busy = false;
+    function doAction(text){
+      if (!S || busy) return;
+      text = String(text||"").trim();
+      if (!text) return;
+      /* 本地硬門檻優先於 AI：副本未達境界，AI 講幾好聽都唔准入 */
+      if ($("aiToggle").checked && ((/血色禁地/.test(text) && S.realm<1) || (/虛天殿/.test(text) && S.realm<3) || (/墜魔谷/.test(text) && S.realm<4))){
+        commit(text, routeAction(text)); return;
+      }
+      if ($("aiToggle").checked){
+        busy = true; $("sendBtn").disabled = true;
+        doAiAction(text).then(function(res){
+          if (res.repaired){
+            var fixNote = { you:"", paras:["（第一稿文筆漂移："+(res.repairReasons||[]).join("、")+"。已自動行文筆修復第二遍——只改文筆同節奏，事實、數字同選項意思冇改，修復稿亦已再過一次檢查。）"], code:null, stat:statusText() };
+            S.log.push(fixNote); renderTurn(fixNote);
+          }
+          commit(text, res);
+        }).catch(function(err){
+          var driftNote = err && /AI漂移/.test(err.message) ? "（AI 回覆文筆漂移或狀態不合法，文筆修復第二遍亦未能救回，已自動改用內置引擎繼續。）" : "（AI 連接失敗，已自動改用內置引擎繼續。）";
+          var entry = { you:text, paras:[driftNote], code:null, stat:statusText() };
+          S.log.push(entry); renderTurn(entry);
+          commit("", routeAction(text));
+        }).finally(function(){ busy=false; $("sendBtn").disabled=false; });
+      } else {
+        commit(text, routeAction(text));
+      }
+    }
+    $("sendBtn").addEventListener("click", function(){
+      var v = $("freeInput").value; $("freeInput").value="";
+      doAction(v || "修煉");
+    });
+    $("freeInput").addEventListener("keydown", function(e){
+      if (e.key==="Enter" && (e.metaKey||e.ctrlKey)){ $("sendBtn").click(); }
+    });
+    $("restartBtn").addEventListener("click", function(){
+      S = null;
+      $("gameView").hidden = true; $("setupView").hidden = false;
+      $("log").innerHTML=""; window.scrollTo({top:0, behavior:"smooth"});
+    });
+
+    /* ============ 開局 ============ */
+    function fillPreset(p){
+      $("fName").value=p.name; $("fDao").value=p.dao; $("fOrigin").value=p.origin;
+      $("fRoot").value=p.root; $("fSect").value=p.sect; $("fGoal").value=p.goal;
+      $("fStones").value=p.stones; $("fStyle").value=p.style; $("fExtra").value=p.extra;
+      if ($("fIdType")) $("fIdType").value=p.idType||"original";
+      if ($("fAnchor")) $("fAnchor").value=p.anchor||"";
+      if ($("fRelation")) $("fRelation").value=p.relation||"";
+      if ($("fEra")) $("fEra").value=p.era||"";
+      if ($("fLimit")) $("fLimit").value=p.limit||"";
+    }
+    document.querySelectorAll(".preset").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        fillPreset(PRESETS[parseInt(btn.getAttribute("data-preset"),10)]);
+        btn.scrollIntoView({behavior:"smooth", block:"center"});
+      });
+    });
+    /* 預設填第一個，等玩家可直接開始 */
+    fillPreset(PRESETS[0]);
+
+    $("startBtn").addEventListener("click", function(){
+      var p = {
+        name: $("fName").value.trim(), dao: $("fDao").value.trim(),
+        origin: $("fOrigin").value.trim(), root: $("fRoot").value,
+        sect: $("fSect").value.trim(), goal: $("fGoal").value.trim(),
+        stones: $("fStones").value, style: $("fStyle").value, extra: $("fExtra").value.trim(),
+        idType: $("fIdType") ? $("fIdType").value : "original",
+        anchor: $("fAnchor") ? $("fAnchor").value.trim() : "",
+        relation: $("fRelation") ? $("fRelation").value.trim() : "",
+        era: $("fEra") ? $("fEra").value.trim() : "",
+        limit: $("fLimit") ? $("fLimit").value.trim() : ""
+      };
+      if (!p.name){ $("fName").focus(); $("fName").placeholder="請先填上名字"; return; }
+      S = newState(p);
+      $("setupView").hidden = true; $("gameView").hidden = false;
+      renderQuick(); renderHeader();
+      var th = threshold();
+      var passivePara = PASSIVE[S.root] ? [PASSIVE[S.root]] : [];
+      var opening = {
+        paras: [
+          "你叫 "+S.name+"，"+S.origin+"。起始地點："+(S.era||"天南越國 · 太嶽山脈")+"。測靈根那一日，測靈盤念出結果——"+ROOT_LABEL[S.root]+"。身份類型："+(IDTYPE_LABEL[S.idType]||"原創凡人")+(S.anchor?"，原著錨點："+S.anchor+(S.relation?"（"+S.relation+"）":""):"")+"。",
+          "你如今的位置是「"+S.sect+"」，境界：凡人——連煉氣都未入，呢點對任何身份都一樣，冇例外。儲物袋裡有靈石 "+S.stones+" 塊、丹藥 "+S.pills+" 粒、材料 "+S.mats+" 份。"+(S.limit?"初始限制講明在先："+S.limit:"")+" "+(S.extra?"你還記得："+S.extra:""),
+          canonPressurePara() || "冇原著包袱，係你嘅自由，亦係你嘅難處：冇人識你，冇人會因為一個名讓路，所有嘢都要自己賺返嚟。",
+          "前路很長：煉氣門檻要 "+th+" 點修為，築基、結丹更是天塹，而且每一步都要計丹藥、材料、傷勢同日子。你嘅目標：「"+(S.goal||"一步步往上爬")+"」。原著引力會將某些人同事推近，但唔會替你行——你隨時可以偏離，偏離程度會記錄低，唔會強行拉返主線。"
+        ].concat(passivePara).filter(Boolean),
+        code: "入門告示\n新入門者先至雜役處報到\n未入煉氣者不得擅闖內谷\n每月供奉按任務結算\n名氣不作供奉",
+        options: stdOptions(opt("去雜役處報到後開始修煉","修煉"), opt("先接一件宗門任務","任務"), opt("去太南山坊市見識一下","坊市"), opt("在山門外四處歷練","歷練"))
+      };
+      commit("", opening);
+      window.scrollTo({top:0, behavior:"smooth"});
+    });
+
+    /* ============ 站主設定開關 ============ */
+    $("ownerToggle").addEventListener("click", function(){
+      var box = $("apiBox");
+      var willShow = box.hidden;
+      box.hidden = !willShow;
+      if (willShow) box.scrollIntoView({behavior:"smooth", block:"start"});
+    });
+    </script>
+  </body>
+</html>
